@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 10. Hardware Issues</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="prev" href="ch09s04.html" title="9.4. Repairing a Boot Loader Problem Lab" /><link rel="next" href="ch10s02.html" title="10.2. Drivers" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+ 
+<a href="ch10s023.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h1 class="title"><a id="idm140091367377696"></a>Chapter 10. Hardware Issues</h1></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="ch10.html#idm140091245978320">10.1. Identify Hardware</a></span></dt><dt><span class="section"><a href="ch10s02.html">10.2. Drivers</a></span></dt><dt><span class="section"><a href="ch10s03.html">10.3. Hardware Failures</a></span></dt><dt><span class="section"><a href="ch10s04.html">10.4. Virtualization Failures</a></span></dt></dl></div><div class="abstract"><p class="title"><strong>Abstract</strong></p><div class="para">
+			<div class="table"><a id="idm140091247582304"></a><p class="title"><strong>Table 10.1. Unit Details</strong></p><div class="table-contents"><table summary="Unit Details"><colgroup><col width="50%" class="c1" /><col width="50%" class="c2" /></colgroup><tbody><tr><td class="">
+								<span class="bold bold"><strong>Unit Goal</strong></span>
+							</td><td class="">
+								Document hardware and troubleshoot hardware issues.
+							</td></tr><tr><td class="">
+								<span class="bold bold"><strong>Performance Objective</strong></span>
+							</td><td class="">
+								<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+											Document recognized hardware in system
+										</div></li><li class="listitem"><div class="para">
+											Identify appropriate drivers and modules
+										</div></li><li class="listitem"><div class="para">
+											Diagnose and test for memory failures
+										</div></li><li class="listitem"><div class="para">
+											Locate differences with virtualized hardware
+										</div></li></ul></div>
+
+							</td></tr><tr><td class="">
+								<span class="bold bold"><strong>Unit Sections</strong></span>
+							</td><td class="">
+								<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+											Identify Hardware
+										</div></li><li class="listitem"><div class="para">
+											Drivers
+										</div></li><li class="listitem"><div class="para">
+											Hardware Failures
+										</div></li><li class="listitem"><div class="para">
+											Virtualization Failures
+										</div></li></ul></div>
+
+							</td></tr></tbody></table></div></div><br class="table-break" />
+
+		</div></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="idm140091245978320"></a>10.1. Identify Hardware</h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Document recognized hardware in system
+					</div></li></ul></div>
+		</div></div><div class="Demo Demo"><div class="title">Hardware Documentation Tools</div>
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							Knowing what hardware you have will help when locating faulty hardware. To get an overview of the hardware connected to your system we can turn to a series of "<code class="command">ls*</code>" commands: <code class="command">lscpu</code>, <code class="command">lsblk</code>, <code class="command">lspci</code> and <code class="command">lsusb</code>. The last two will take multiple <code class="command">-v</code> parameters to increase the verbosity of their output. A USB-device for example will tell your system how much power it claims to use, <code class="command">lsusb</code> will output this to us, thus enabling us to calculate the total power we are trying to get out of a single USB-port/hub.
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>lscpu</code></strong>
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                1
+On-line CPU(s) list:   0
+Thread(s) per core:    1
+Core(s) per socket:    1
+CPU socket(s):         1
+NUMA node(s):          1
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 2
+Stepping:              3
+CPU MHz:               2659.998
+BogoMIPS:              5319.99
+Hypervisor vendor:     KVM
+Virtualization type:   full
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              4096K
+NUMA node0 CPU(s):     0
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>lsblk</code></strong>
+NAME                  MAJ:MIN RM   SIZE RO MOUNTPOINT
+vda                   252:0    0     6G  0 
+├─vda1                252:1    0   256M  0 /boot
+└─vda2                252:2    0   4.5G  0 
+  ├─vgsrv-swap (dm-0) 253:0    0   544M  0 [SWAP]
+  ├─vgsrv-root (dm-1) 253:1    0   3.3G  0 /
+  └─vgsrv-home (dm-2) 253:2    0   256M  0 /home
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>lspci</code></strong>
+00:00.0 Host bridge: Intel Corporation 440FX - 82441FX PMC [Natoma] (rev 02)
+00:01.0 ISA bridge: Intel Corporation 82371SB PIIX3 ISA [Natoma/Triton II]
+00:01.1 IDE interface: Intel Corporation 82371SB PIIX3 IDE [Natoma/Triton II]
+00:01.2 USB Controller: Intel Corporation 82371SB PIIX3 USB [Natoma/Triton II] (rev 01)
+00:01.3 Bridge: Intel Corporation 82371AB/EB/MB PIIX4 ACPI (rev 03)
+00:02.0 VGA compatible controller: Cirrus Logic GD 5446
+00:03.0 Ethernet controller: Red Hat, Inc Virtio network device
+00:04.0 Audio device: Intel Corporation 82801FB/FBM/FR/FW/FRW (ICH6 Family) High Definition Audio Controller (rev 01)
+00:05.0 SCSI storage controller: Red Hat, Inc Virtio block device
+00:06.0 RAM memory: Red Hat, Inc Virtio memory balloon
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>lsusb</code></strong>
+Bus 001 Device 002: ID 0627:0001 Adomax Technology Co., Ltd 
+Bus 001 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub</pre></li><li class="listitem"><div class="para">
+							The <code class="command">dmidecode</code> command will query your BIOS for installed hardware, giving us access to serial numbers and asset tags in an easy way. Some devices (mostly memory slots) can also report their error-state. Keeping an asset database will help you when you need to order replacement parts, or figure out where you actually ordered a piece of equipment. Keeping a asset database up-to-date can be done mostly automatically by parsing the output of <code class="command">dmidecode</code>.
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>dmidecode</code></strong>
+# dmidecode 2.10
+SMBIOS 2.4 present.
+10 structures occupying 263 bytes.
+Table at 0x3FFFFEF0.
+
+Handle 0x0000, DMI type 0, 24 bytes
+BIOS Information
+        Vendor: Bochs
+        Version: Bochs
+        Release Date: 01/01/2007
+        Address: 0xE8000
+        Runtime Size: 96 kB
+        ROM Size: 64 kB
+        Characteristics:
+                BIOS characteristics not supported
+                Targeted content distribution is supported
+        BIOS Revision: 1.0
+
+Handle 0x0100, DMI type 1, 27 bytes
+System Information
+        Manufacturer: Bochs
+        Product Name: Bochs
+        Version: Not Specified
+        Serial Number: Not Specified
+        UUID: 5BC93D1A-8C71-EF16-13C0-F8996516CDF3
+        Wake-up Type: Power Switch
+        SKU Number: Not Specified
+        Family: Not Specified
+
+Handle 0x0300, DMI type 3, 20 bytes
+Chassis Information
+        Manufacturer: Bochs
+        Type: Other
+        Lock: Not Present
+        Version: Not Specified
+        Serial Number: Not Specified
+        Asset Tag: Not Specified
+        Boot-up State: Safe
+        Power Supply State: Safe
+        Thermal State: Safe
+        Security Status: Unknown
+        OEM Information: 0x00000000
+        Height: Unspecified
+        Number Of Power Cords: Unspecified
+
+Handle 0x0401, DMI type 4, 32 bytes
+Processor Information
+        Socket Designation: CPU01
+        Type: Central Processor
+        Family: Other
+        Manufacturer: Bochs
+        ID: 23 06 00 00 FD FB 8B 07
+        Version: Not Specified
+        Voltage: Unknown
+        External Clock: Unknown
+        Max Speed: 2000 MHz
+        Current Speed: 2000 MHz
+        Status: Populated, Enabled
+        Upgrade: Other
+        L1 Cache Handle: Not Provided
+        L2 Cache Handle: Not Provided
+        L3 Cache Handle: Not Provided
+
+Handle 0x1000, DMI type 16, 15 bytes
+Physical Memory Array
+        Location: Other
+        Use: System Memory
+        Error Correction Type: Multi-bit ECC
+        Maximum Capacity: 1 GB
+        Error Information Handle: Not Provided
+        Number Of Devices: 1
+
+Handle 0x1100, DMI type 17, 21 bytes
+Memory Device
+        Array Handle: 0x1000
+        Error Information Handle: 0x8300
+        Total Width: 64 bits
+        Data Width: 64 bits
+        Size: 1024 MB
+        Form Factor: DIMM
+        Set: None
+        Locator: DIMM 0
+        Bank Locator: Not Specified
+        Type: RAM
+        Type Detail: None
+
+Handle 0x1300, DMI type 19, 15 bytes
+Memory Array Mapped Address
+        Starting Address: 0x00000000000
+        Ending Address: 0x0003FFFFFFF
+        Range Size: 1 GB
+        Physical Array Handle: 0x1000
+        Partition Width: 0
+
+Handle 0x1400, DMI type 20, 19 bytes
+Memory Device Mapped Address
+        Starting Address: 0x00000000000
+        Ending Address: 0x0003FFFFFFF
+        Range Size: 1 GB
+        Physical Device Handle: 0x1100
+        Memory Array Mapped Address Handle: 0x1300
+        Partition Row Position: 1
+
+Handle 0x2000, DMI type 32, 11 bytes
+System Boot Information
+        Status: No errors detected
+
+Handle 0x7F00, DMI type 127, 4 bytes
+End Of Table</pre></li><li class="listitem"><div class="para">
+							The <code class="command">x86info</code> command is useful for displaying more detailed hardware information when used on 32-bit and 64-bit x86-based machines. It can display information about memory cache, CPU features, processor speed, model specific registers, and other x86 hardware features. The <code class="command">-a</code> option displays all the information <code class="command">x86info</code> can find about the current machine:
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>x86info -a</code></strong>
+x86info v1.25.  Dave Jones 2001-2009
+Feedback to &lt;davej@redhat.com&gt;.
+
+Found 2 CPUs
+MP Table:
+#       APIC ID Version State           Family  Model   Step    Flags
+#        0       0x14    BSP, usable     15      6       4       0xbfebfbff
+#        1       0x14    AP, usable      15      6       4       0xbfebfbff
+
+--------------------------------------------------------------------------
+CPU #1
+EFamily: 0 EModel: 0 Family: 15 Model: 6 Stepping: 4
+CPU Model: Unknown CPU
+Processor name string: Intel(R) Pentium(R) D CPU 3.60GHz
+Type: 0 (Original OEM)  Brand: 0 (Unsupported)
+Pentium 4 specific MSRs:
+IA32_PLATFORM_ID=000a000000000000
+System bus in order queue depth=12
+... output omitted ...</pre></li><li class="listitem"><div class="para">
+							The contents of the kernel's internal log buffer can be read using the <code class="command">dmesg</code> command. Due to the finite size of the buffer, the oldest log messages are dropped once the buffer fills. (On x86/x86-64, the size of this buffer is 128 KB in RHEL 6.) During the boot process, a snapshot of the current contents of the log buffer is saved to <code class="filename">/var/log/dmesg</code> near the end of the <code class="filename">rc.sysinit</code> script. Once the system has finished booting, kernel messages are generally logged to <code class="filename">/var/log/messages</code> by <code class="command">klogd</code> (part of the <code class="command">rsyslog</code> service).
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>dmesg | head</code></strong>
+Initializing cgroup subsys cpuset
+Initializing cgroup subsys cpu
+Linux version 2.6.32-131.0.15.el6.x86_64 (mockbuild@x86-007.build.bos.redhat.com) (gcc version 4.4.4 20100726 (Red Hat 4.4.4-13) (GCC) ) #1 SMP Tue May 10 15:42:40 EDT 2011
+Command line: ro root=/dev/mapper/GLSvg-GLSroot rd_LVM_LV=GLSvg/GLSroot rd_LVM_LV=GLSvg/GLSswap rd_NO_LUKS rd_NO_MD rd_NO_DM LANG=en_US.UTF-8 SYSFONT=latarcyrheb-sun16 KEYBOARDTYPE=pc KEYTABLE=us crashkernel=auto rhgb quiet
+KERNEL supported cpus:
+  Intel GenuineIntel
+  AMD AuthenticAMD
+  Centaur CentaurHauls
+BIOS-provided physical RAM map:
+ BIOS-e820: 0000000000000000 - 000000000009fc00 (usable)</pre></li></ol></div>
+			</div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				<code class="command">lscpu</code>(1), <code class="command">lsblk</code>(8), <code class="command">lspci</code>(8), <code class="command">lsusb</code>(8), <code class="command">dmidecode</code>(8), <code class="command">x86info</code>(1), and <code class="command">dmesg</code>(1) man pages
+			</div></div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

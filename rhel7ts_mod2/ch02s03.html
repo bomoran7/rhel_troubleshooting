@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>2.3. Baselining: Using sar Lab</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch02.html" title="Chapter 2. Being Proactive, Part 1 Labs" /><link rel="prev" href="ch02s02.html" title="2.2. Baselining: Using aide Lab" /><link rel="next" href="ch03.html" title="Chapter 3. Being Proactive, Part 2" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href="ch02s02.html">Previous</a> | 
+</div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091238014640"></a>2.3. Baselining: Using <code class="command">sar</code> Lab</h2></div></div></div><div class="task Lab"><p class="title"><strong>sar Performance Monitoring</strong></p><div class="tasksummary"> <div class="para">
+			<span class="bold bold"><strong>Lab Overview:</strong></span> Install <code class="command">sar</code> performance monitoring collection agents and generate utilization reports.
+		</div>
+		 <div class="para">
+			<span class="bold bold"><strong>Success Criteria:</strong></span> Generate reports on system utilization from <code class="command">sar</code>.
+		</div>
+		 <div class="para">
+			<span class="bold bold"><strong>Lab Outline:</strong></span> Install the package that provides the <code class="command">sar</code> utility. Then, given our impatience, find the data-gathering script in the <code class="filename">/etc/cron.d/</code> directory for <code class="command">sar</code> and execute it a couple times.
+		</div>
+		 <div class="para">
+			Display the collected data about memory usage and CPU utilization. If you are working on a machine with multiple cores, extract the data per core (Hint: multiple <code class="command">-P cpu-number</code> flags on a single command line).
+		</div>
+		 </div><div class="procedure"><ol class="1"><li class="step"><p class="title"><strong>Install the package that provides the <code class="command">sar</code> utility.</strong></p><div class="informalexample"><div class="para">
+					There is not a package called <code class="command">sar</code>, but if you cannot remember which package provides that utility you can always run <code class="command">yum whatprovides *bin/sar</code>. This will inform you that the package is called <code class="filename">sysstat</code>.
+				</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>yum install -y sysstat</code></strong> 
+... Output omitted ...</pre></div></li><li class="step"><p class="title"><strong>Once <code class="command">sar</code> is installed, data will be collected periodically. Normally <code class="command">cron</code> will handle that, but we are a little impatient. Find the data-gathering script in the <code class="filename">/etc/cron.d/</code> directory for <code class="command">sar</code> and execute it a couple times.</strong></p><div class="informalexample"><div class="para">
+					The <code class="command">cron</code> file for <code class="command">sar</code> is <code class="filename">/etc/cron.d/sysstat</code>. It contains the following lines:
+				</div><pre class="screen">
+# Run system activity accounting tool every 10 minutes
+*/10 * * * * root /usr/lib64/sa/sa1 1 1
+# 0 * * * * root /usr/lib64/sa/sa1 600 6 &amp;
+# Generate a daily summary of process accounting at 23:53
+53 23 * * * root /usr/lib64/sa/sa2 -A
+</pre><div class="para">
+					Now you know the command you need to execute to collect some data for <code class="command">sar</code> reports. Run <code class="command">/usr/lib64/sa/sa1 1 1</code> a few times.
+				</div></div></li><li class="step"><p class="title"><strong>Display the collected data about memory usage from <code class="command">sar</code>. Also display the data collected about CPU utilization. If you are working on a machine with multiple cores, extract the data per core.</strong></p><div class="informalexample"><div class="para">
+					Run the following command to display memory usage:
+				</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>LANG=C sar -r</code></strong> 
+... Output omitted ...</pre><div class="para">
+					The following commands display CPU utilization:
+				</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>LANG=C sar -p</code></strong> 
+... Output omitted ... 
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>LANG=C sar -P 0 -P 1 -p</code></strong> 
+... Output omitted ...</pre></div></li></ol></div></div></div>><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

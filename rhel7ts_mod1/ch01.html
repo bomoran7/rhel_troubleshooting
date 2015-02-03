@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 1. Being Proactive, Part 1</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="prev" href="download-lab-rpms.html" title="3. Download Lab RPMs" /><link rel="next" href="ch01s02.html" title="1.2. Monitoring: Centralized Logging" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+ <a href="ch01s02.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h1 class="title"><a id="idm140091260314080"></a>Chapter 1. Being Proactive, Part 1</h1></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="ch01.html#idm140091260713968">1.1. Being Proactive</a></span></dt><dt><span class="section"><a href="ch01s02.html">1.2. Monitoring: Centralized Logging</a></span></dt><dt><span class="section"><a href="ch01s03.html">1.3. Monitoring: Detecting Hard Drive Failures</a></span></dt><dt><span class="section"><a href="ch01s04.html">1.4. Baselining: Using <span class="application"><strong>aide</strong></span></a></span></dt><dt><span class="section"><a href="ch01s05.html">1.5. Baselining: Using <code class="command">sar</code></a></span></dt><dt><span class="section"><a href="ch01s06.html">1.6. Network Monitoring</a></span></dt></dl></div><div class="abstract"><p class="title"><strong>Abstract</strong></p><div class="para">
+			<div class="table"><a id="idm140091248476016"></a><p class="title"><strong>Table 1.1. Unit Details</strong></p><div class="table-contents"><table summary="Unit Details"><colgroup><col width="50%" class="c1" /><col width="50%" class="c2" /></colgroup><tbody><tr><td class="">
+								<span class="bold bold"><strong>Unit Goal</strong></span>
+							</td><td class="">
+								Configure tools to proactively monitor and baseline systems
+							</td></tr><tr><td class="">
+								<span class="bold bold"><strong>Performance Objective</strong></span>
+							</td><td class="">
+								<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+											Proactively monitor system with a central log server
+										</div></li><li class="listitem"><div class="para">
+											Use SMART to identify hard drive features
+										</div></li><li class="listitem"><div class="para">
+											Configure <code class="command">aide</code> to track file system changes
+										</div></li><li class="listitem"><div class="para">
+											Configure <code class="command">sar</code> to monitor system performance
+										</div></li><li class="listitem"><div class="para">
+											Discuss NAGIOS and other network monitoring tools
+										</div></li></ul></div>
+
+							</td></tr><tr><td class="">
+								<span class="bold bold"><strong>Unit Sections</strong></span>
+							</td><td class="">
+								<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+											Being Proactive
+										</div></li><li class="listitem"><div class="para">
+											Monitoring: Centralized Logging
+										</div></li><li class="listitem"><div class="para">
+											Monitoring: Detecting Hard Drive Failures
+										</div></li><li class="listitem"><div class="para">
+											Baselining: Using <code class="command">aide</code>
+										</div></li><li class="listitem"><div class="para">
+											Baselining: Using <code class="command">sar</code>
+										</div></li><li class="listitem"><div class="para">
+											Network Monitoring
+										</div></li></ul></div>
+
+							</td></tr></tbody></table></div></div><br class="table-break" />
+
+		</div></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="idm140091260713968"></a>1.1. Being Proactive</h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Consider the importance of planning ahead
+					</div></li></ul></div>
+		</div></div><div class="para">
+			How many regrets do we have following a failure? Did we make that backup before the disk crashed? What could we have done differently to prevent the failure or make it easier to troubleshoot?
+		</div><div class="itemizedlist"><div class="para">
+				Before we focus on specific issue areas, we will explore steps that should be taken <span class="bold bold"><strong>prior</strong></span> to a problem occurring:
+			</div><ul><li class="listitem"><div class="para">
+					Monitoring systems
+				</div></li><li class="listitem"><div class="para">
+					Baselining systems
+				</div></li><li class="listitem"><div class="para">
+					Managing multiple versions of configuration files
+				</div></li><li class="listitem"><div class="para">
+					Writing a disaster recovery plan
+				</div></li></ul></div><div class="para">
+			Being prepared for problems is one way of minimizing the effects they can have. Monitoring is a very important part of this process that we will look at in more detail next, but also being able to respond when you spot something is equally important.
+		</div><h3><a id="idm140091251554800"></a>Support Contracts</h3><div class="para">
+			Support contracts for critical systems are essential to have in place. Most large software and hardware vendors offer a range of support from web based ticketing systems up to 24x7x365 support plans for mission critical apps and hardware. When you take out a support contract, check what coverage you will actually get. Often a guaranteed 4 hour response time does not mean an engineer turning up on site but merely a response via phone or email to the initial ticket.
+		</div><div class="para">
+			In some cases support contracts are not enough and we may need on-site spares that can be used and replaced at a later date. Disk systems (such as NAS and SAN arrays) often allow for these spares to be configured with automatic fail over, the faulty drive or component then swapped out without any downtime being needed, known as "hot-swap". In the case of machine failure or non hot-swap component failure, a cold spare may be kept. In the event of a complete hardware failure, the spare can be brought up to replace the services until the original has been repaired/replaced. Because of the low cost of x86-based hardware and Linux-based operating systems, this has become a viable alternative to maintaining expensive proprietary hardware with expensive support contracts.
+		</div><div class="para">
+			Tracking warranties on hardware is also extremely useful as it may help with obtaining spares quickly and efficiently. This is especially important with the warranties on hard disks. Disks out of warranty should be replaced or at least not used for critical data. Have a replacement plan in place, including funding and migration plans for when the warranties expire.
+		</div><h3><a id="idm140091251829792"></a>Locating Documentation</h3><div class="para">
+			Every organization should be keeping a set of documents that fully outline and identify both the hardware and software installed, along with the configuration settings for each. In many cases this documentation is considered a "living" document, so may be kept online, available in a searchable form.
+		</div><div class="para">
+			Documentation provided by the vendor or software author can exist in several forms. For man pages, a keyword search can be performed using <code class="command">man -k <em class="replaceable"><code>keyword</code></em></code>, which results in a list of relevant man pages, including chapters.
+		</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>man -k passwd</code></strong>
+checkPasswdAccess (3) - query the SELinux policy database in the kernel.
+chpasswd (8)          - update passwords in batch mode
+ckpasswd (8)          - nnrpd password authenticator
+fgetpwent_r (3)       - get passwd file entry reentrantly
+getpwent_r (3)        - get passwd file entry reentrantly
+...
+passwd (1)            - update user's authentication tokens
+sslpasswd (1ssl)      - compute password hashes
+passwd (5)            - password file
+passwd.nntp (5)       - Passwords for connecting to remote NNTP servers
+passwd2des (3)        - RFS password encryption
+...</pre><div class="para">
+			By convention, most other documentation is found in the <code class="filename">/usr/share/doc/</code> directory, in subdirectories named by RPM package. The <code class="filename">/usr/share/doc/</code> directory is used to collect "everything else": If it is not a man page, not an info page, not part of the GNOME help utility, it is found here.
+		</div><div class="para">
+			The documentation directory for the <code class="command">zip</code> utility, for example, tells you the compression algorithm, and little else. Not much help to the administrator. The <code class="filename">samba-*</code> directory, however, includes many useful texts.
+		</div><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				Many applications have their documentation packaged in a separate RPM package, which may or may not be installed. An example is the <code class="filename">bash-doc</code> package. Often, these packages are found in Red Hat Enterprise Linux 7's <code class="code">Optional</code> tree.
+			</div></div></div><div class="para">
+			A last (or first) resort to locate the documentation supplied with an rpm package is to use the <code class="command">rpm -qd <em class="replaceable"><code>package</code></em></code> command, which lists all files flagged <code class="code">%doc</code>.
+		</div><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				Another useful command is <code class="command">rpm -qc <em class="replaceable"><code>package</code></em></code>, which lists all configuration files distributed in the package.
+			</div></div></div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				<code class="command">man</code>(1) and <code class="command">rpm</code>(8) man pages
+			</div><div class="para">
+				<code class="filename">/usr/share/doc/<em class="replaceable"><code>packagename</code></em>/</code>
+			</div></div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

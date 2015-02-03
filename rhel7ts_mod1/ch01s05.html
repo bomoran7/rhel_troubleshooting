@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>1.5. Baselining: Using sar</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch01.html" title="Chapter 1. Being Proactive, Part 1" /><link rel="prev" href="ch01s04.html" title="1.4. Baselining: Using aide" /><link rel="next" href="ch01s06.html" title="1.6. Network Monitoring" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href="ch01s04.html">Previous</a> | 
+<a href="ch01s06.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091260384400"></a>1.5. Baselining: Using <code class="command">sar</code></h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Configure <code class="command">sar</code> to monitor system performance
+					</div></li></ul></div>
+		</div></div><div class="para">
+			Another useful system monitoring tool is <code class="command">sar</code>, the <span class="application"><strong>System Activity Reporter</strong></span>, provided by the <span class="application"><strong>sysstat</strong></span> package. What <code class="command">sar</code> does is collect information about system activity from the operating system at a particular point in time. It normally takes a sample of data over a selected time period, either once or on some repeating schedule. The information it collects can have to do with memory usage, disk I/O, network activity, and so on.
+		</div><div class="para">
+			There are two modes in which <code class="command">sar</code> operates. When <span class="application"><strong>sysstat</strong></span> is installed, a cron job is set up that takes a one second sample of system activity every ten minutes and saves it to a file. The <code class="command">sar</code> command can be used to read this information. Otherwise, you can run <code class="command">sar</code> from the command line to collect specific data, averaged over a certain period of time in seconds, a specified number of times.
+		</div><h3><a id="idm140091260374896"></a>Deploying the <code class="command">sar</code> command</h3><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Install the <span class="application"><strong>sysstat</strong></span> package. This package provides cron scripts (<code class="filename">/etc/cron.d/sysstat</code>) that will gather data automatically.
+				</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>cat /etc/cron.d/sysstat</code></strong>
+
+# Run system activity accounting tool every 10 minutes
+*/10 * * * * root /usr/lib64/sa/sa1 1 1
+# 0 * * * * root /usr/lib64/sa/sa1 600 6 &amp;
+# Generate a daily summary of process accounting at 23:53
+53 23 * * * root /usr/lib64/sa/sa2 -A
+
+</pre></li></ul></div><div class="para">
+			The first column of <code class="command">sar</code> output will always be the time of the recorded statistics, to make sure that this column is always in a format we can understand/parse it is best to prefix your <code class="command">sar</code> commands with <code class="command">LANG=C</code> to get a unified time format. You can also execute <code class="command">export LANG=C</code> to make this the default for your session.
+		</div><div class="itemizedlist"><p class="title"><strong>Example sar commands</strong></p><ul><li class="listitem"><div class="para">
+					Run <code class="command">sar -A</code> to display all information collected today.
+				</div></li><li class="listitem"><div class="para">
+					Run <code class="command">sar -u 2 5</code> to display five samples of system CPU usage spaced 2 seconds apart.
+				</div></li><li class="listitem"><div class="para">
+					Run <code class="command">sar -r</code> to display memory statistics
+				</div></li><li class="listitem"><div class="para">
+					Run <code class="command">sar -S</code> to display swap space utilization statistics
+				</div></li><li class="listitem"><div class="para">
+					Run <code class="command">sar -b</code> to display I/O statistics
+				</div></li></ul></div><div class="para">
+			Add a little bit of <code class="command">awk</code> parsing to generate useful output:
+		</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>export LANG=C</code></strong>
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>sar -r | tail -n+5 | awk '{print $1,$4,$8}'</code></strong>
+10:20:01 %memused %swpused
+10:30:01 92.28 0.05
+10:40:01 92.28 0.05
+Average: 92.28 0.05</pre><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				<code class="command">sar</code>(1), <code class="command">sa1</code>(8), <code class="command">sa2</code>(8), <code class="command">sadc</code>(8) man page
+			</div></div></div></div<center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

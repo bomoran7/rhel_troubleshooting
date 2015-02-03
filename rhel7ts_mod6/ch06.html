@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 6. Basic Troubleshooting Techniques and Procedures</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="prev" href="disaster-recovery-avoiding-disaster.html" title="5.18. Disaster Recovery: Avoiding Disaster" /><link rel="next" href="ch06s02.html" title="6.2. Gathering Additional Information from Logs" /></head><body>><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+ 
+<a href="ch06s02.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h1 class="title"><a id="idm140091260738848"></a>Chapter 6. Basic Troubleshooting Techniques and Procedures</h1></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="ch06.html#idm140091251443152">6.1. Collecting Information from Reporter</a></span></dt><dt><span class="section"><a href="ch06s02.html">6.2. Gathering Additional Information from Logs</a></span></dt><dt><span class="section"><a href="ch06s03.html">6.3. Problem Replication</a></span></dt><dt><span class="section"><a href="ch06s04.html">6.4. Comparing/Isolating/Testing</a></span></dt></dl></div><div class="abstract"><p class="title"><strong>Abstract</strong></p><div class="para">
+			<div class="table"><a id="idm140091238060080"></a><p class="title"><strong>Table 6.1. Unit Details</strong></p><div class="table-contents"><table summary="Unit Details"><colgroup><col width="50%" class="c1" /><col width="50%" class="c2" /></colgroup><tbody><tr><td class="">
+								<span class="bold bold"><strong>Unit Goal</strong></span>
+							</td><td class="">
+								Apply systematic processes to troubleshooting
+							</td></tr><tr><td class="">
+								<span class="bold bold"><strong>Performance Objective</strong></span>
+							</td><td class="">
+								<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+											Collect information from problem reporter
+										</div></li><li class="listitem"><div class="para">
+											Extract needed information from logs
+										</div></li><li class="listitem"><div class="para">
+											Tune applications to produce more output
+										</div></li><li class="listitem"><div class="para">
+											Replicate problem for confirmation and evaluation
+										</div></li><li class="listitem"><div class="para">
+											Compare performance or configuration differences with other systems or baseline
+										</div></li><li class="listitem"><div class="para">
+											Perform root-cause analysis
+										</div></li><li class="listitem"><div class="para">
+											Verify fix to an isolated problem
+										</div></li></ul></div>
+
+							</td></tr><tr><td class="">
+								<span class="bold bold"><strong>Unit Sections</strong></span>
+							</td><td class="">
+								<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+											Collecting information from reporter
+										</div></li><li class="listitem"><div class="para">
+											Gathering additional information
+										</div></li><li class="listitem"><div class="para">
+											Problem replication
+										</div></li><li class="listitem"><div class="para">
+											Comparing, isolating, testing
+										</div></li></ul></div>
+
+							</td></tr></tbody></table></div></div><br class="table-break" />
+
+		</div></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="idm140091251443152"></a>6.1. Collecting Information from Reporter</h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Gather sufficient information from the reporter
+					</div></li></ul></div>
+		</div></div><div class="para">
+			One of the greatest challenges to troubleshooting any problem is gathering sufficient information from the reporter.
+		</div><div class="orderedlist"><div class="para">
+				A standard question to ask a reporter is "What have you changed recently?" The challenge is that the reflex reply from the reporter is "Nothing." There are several reasons for this:
+			</div><ol><li class="listitem"><div class="para">
+					The question is oftentimes asked in an accusatory fashion. When society is focused on placing blame for the problem on some one or some thing, we need to figure out how to put the reporter at ease. Try to gain the trust of the reporter. Focus on their observation skills, by perhaps phrasing it as: "Have you noticed any recent changes to your system/environment?"
+				</div></li><li class="listitem"><div class="para">
+					Remember that the reporter does not have our experience. They are less likely to notice significant clues or warning signs. In their mind those clues, or in this case changes, are "unrelated." Did they recently change brands of morning coffee, and now all the systems are running slower? Could the recent installation of a new wireless phone system in the building be causing sporadic networking issues?
+				</div></li><li class="listitem"><div class="para">
+					Use every problem report as an opportunity to teach the reporter how to gather more information. For example, how many reporters write down the exact error message text? In this discussion of changes, suggest that the reporter keep a log of changes they make to their system for easier recall.
+				</div></li></ol></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

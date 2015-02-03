@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>9.4. Repairing a Boot Loader Problem Lab</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch09.html" title="Chapter 9. Boot Troubleshooting Labs" /><link rel="prev" href="ch09s03.html" title="9.3. Repairing Boot Problems Lab" /><link rel="next" href="ch10.html" title="Chapter 10. Hardware Issues" /></head><body<img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""ch0903.html">Previous</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091245557824"></a>9.4. Repairing a Boot Loader Problem Lab</h2></div></div></div><div class="task Checklist"><p class="title"><strong> </strong></p><div class="tasksummary"> <div class="para">
+		In this lab, you will repair an issue with the boot loader configuration on one of your machines.
+	</div>
+	 <div class="informaltable"><table><colgroup><col width="50%" class="c1" /><col width="50%" class="c2" /></colgroup><thead><tr><th class="" colspan="2">
+						Resources:
+					</th></tr></thead><tbody><tr><td class="">
+						<span class="bold bold"><strong>Machines:</strong></span>
+					</td><td class="">
+						<code class="code">server1</code>
+					</td></tr></tbody></table></div>
+	 <div class="formalpara"><div class="title">Outcomes:</div>
+			A machine that boots normally without user intervention.
+		</div>
+	 </div><div class="taskprerequisites"> <div class="itemizedlist"><ul><li class="listitem"><div class="para">
+				Access <code class="code">server1</code> system using the GUI and log in as root.
+			</div></li><li class="listitem"><div class="para">
+				Break grub with the following command then reboot the VM:
+			</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>sed -i "s/linux16/os16/" /boot/grub2/grub.cfg</code></strong>
+<code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>reboot</code></strong></pre></li></ul></div>
+	 </div><div class="procedure"><ol class="1"><li class="step"><div class="para">
+				The system should fail to boot right after coming out of grub. 
+<pre class="screen">error: can't find command `os16'.
+unaligned pointer 0x3fed58bf
+Aborted. Press any key to exit.
+</pre>
+
+			</div></li><li class="step"><div class="para">
+				Reboot the <code class="code">server1</code> VM by using Send Key -&gt; <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>Del</strong></span>, then interrupt the boot loader countdown timer.
+			</div></li><li class="step"><div class="para">
+				Move the cursor to the default boot entry, then press <span class="keycap"><strong>e</strong></span> to edit that entry. Inspect the configuration closely, look for text starting with os16 (inserted with the sed command earlier).
+			</div></li><li class="step"><div class="para">
+				Find the line that is blocking the boot process, modify it, then boot with these changes.
+			</div><ol class="a"><li class="step"><div class="para">
+						<code class="code">os16</code> is not a valid <code class="command">grub</code> directive. Change it to <code class="code">linux16</code>.
+					</div></li><li class="step"><div class="para">
+						Press <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>x</strong></span> to boot your system with the modified configuration.
+					</div></li></ol></li><li class="step"><div class="para">
+				Wait for the system to boot, log in as <code class="code">root</code>, then generate a new <code class="command">grub2</code> configuration. Do not immediately overwrite the existing configuration, but inspect the new config first.
+			</div><ol class="a"><li class="step"><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>grub2-mkconfig &gt; /tmp/newgrub</code></strong></pre></li><li class="step"><div class="para">
+						Look at the differences between the broken existing grub and the new proposed configuration. (Ignore the lines about msdos)
+					</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>diff /boot/grub2/grub.cfg /tmp/newgrub</code></strong></pre></li><li class="step"><div class="para">
+						Commit the configuration to disk.
+					</div><pre class="screen"><code class="prompt">[root@%srv; ~]# </code><strong class="userinput"><code>grub2-mkconfig &gt; /boot/grub2/grub.cfg</code></strong></pre></li></ol></li><li class="step"><div class="para">
+				Reboot your machine, and check if it boots normally again without user intervention.
+			</div><ol class="a"><li class="step"><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl reboot</code></strong></pre></li></ol></li></ol></div></div></div><ul class="docnav"><li class="previous"><a accesskey="p" href="ch09s03.html"><strong>Prev</strong>9.3. Repairing Boot Problems Lab</a></li><li class="up"><a accesskey="u" href="#"><strong>Up</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Home</strong></a></li><li class="next"><a accesskey="n" href="ch10.html"><strong>Next</strong>Chapter 10. Hardware Issues</a></li></ul></body></html>

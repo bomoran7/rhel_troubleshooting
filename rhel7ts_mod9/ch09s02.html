@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>9.2. Resetting a Lost root Password Lab</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch09.html" title="Chapter 9. Boot Troubleshooting Labs" /><link rel="prev" href="ch09.html" title="Chapter 9. Boot Troubleshooting Labs" /><link rel="next" href="ch09s03.html" title="9.3. Repairing Boot Problems Lab" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""ch09.html">Previous</a> | 
+<a href="ch09s03.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091245707856"></a>9.2. Resetting a Lost root Password Lab</h2></div></div></div><div class="task Checklist"><p class="title"><strong> </strong></p><div class="tasksummary"> <div class="para">
+		In this lab, you will recover a lost root password.
+	</div>
+	 <div class="informaltable"><table><colgroup><col width="50%" class="c1" /><col width="50%" class="c2" /></colgroup><thead><tr><th class="" colspan="2">
+						Resources:
+					</th></tr></thead><tbody><tr><td class="">
+						<span class="bold bold"><strong>Machines:</strong></span>
+					</td><td class="">
+						<code class="code">server1</code>
+					</td></tr></tbody></table></div>
+	 <div class="formalpara"><div class="title">Outcomes:</div>
+			A recovered root password.
+		</div>
+	 </div><div class="taskprerequisites"> <div class="itemizedlist"><ul><li class="listitem"><div class="para">
+				Assume that you do not know the root password for <code class="code">server1</code> and it must be changed.
+			</div></li><li class="listitem"><div class="para">
+				Log into the GUI of your <code class="code">desktop1</code> system using the guacamole interface. Start Konsole and then run the <code class="code">virt-manager</code> tool.
+			</div></li><li class="listitem"><div class="para">
+				In the virt-manager GUI, select the <code class="code">vserver</code> VM then click Open.
+			</div><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+					The vserver VM is your server1.example.com host.
+				</div></div></div></li><li class="listitem"><div class="para">
+				Click the Console button to see the VM's console.
+			</div></li><li class="listitem"><div class="para">
+				Click View -&gt; Scale Display -&gt; Always to make the entire console visible in the screen.
+			</div></li></ul></div>
+	 </div><div class="procedure"><ol class="1"><li class="step"><div class="para">
+				Reboot your system, and interrupt the countdown in the boot loader menu.
+			</div><ol class="a"><li class="step"><div class="para">
+						Click Send Key -&gt; <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>Del</strong></span>
+					</div></li><li class="step"><div class="para">
+						When the boot loader menu appears, press any key to interrupt the countdown.
+					</div></li></ol></li><li class="step"><div class="para">
+				Edit the default boot loader entry (in memory) to abort the boot process just after all file systems have been mounted, but before control is handed over to <code class="command">systemd</code>, then boot.
+			</div><ol class="a"><li class="step"><div class="para">
+						Use the cursor keys to highlight the default boot loader entry.
+					</div></li><li class="step"><div class="para">
+						Press <span class="keycap"><strong>e</strong></span> to edit the current entry.
+					</div></li><li class="step"><div class="para">
+						Using the cursor keys, navigate to the line that starts with <code class="code">linux16</code>.
+					</div></li><li class="step"><div class="para">
+						Press <span class="keycap"><strong>End</strong></span> to move the cursor to the end of the line.
+					</div></li><li class="step"><div class="para">
+						Append <code class="code">rd.break</code> to the end of the line.
+					</div></li><li class="step"><div class="para">
+						Press <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>x</strong></span> to boot using the modified config.
+					</div></li></ol></li><li class="step"><div class="para">
+				At the <code class="code">switch_root</code> prompt, remount the <code class="filename">/sysroot</code> file system read-write, then use <code class="command">chroot</code> to go into a <code class="command">chroot</code> jail at <code class="filename">/sysroot</code>. 
+			</div><ol class="a"><li class="step"><pre class="screen"><code class="prompt">switch_root:/# </code><strong class="userinput"><code>mount -oremount,rw /sysroot</code></strong>
+<code class="prompt">switch_root:/# </code><strong class="userinput"><code>chroot /sysroot</code></strong></pre></li></ol></li><li class="step"><div class="para">
+				Change the <code class="code">root</code> password to something of your own choosing.
+			</div><ol class="a"><li class="step"><pre class="screen"><code class="prompt">sh-4.2# </code><strong class="userinput"><code>passwd</code></strong></pre></li></ol></li><li class="step"><div class="para">
+				Configure the system to automatically perform a full SELinux relabel after boot. This is necessary since the <code class="command">passwd</code> tool re-created the <code class="filename">/etc/shadow</code> file without an SELinux context.
+			</div><ol class="a"><li class="step"><pre class="screen"><code class="prompt">sh-4.2# </code><strong class="userinput"><code>touch /.autorelabel</code></strong></pre></li></ol></li><li class="step"><div class="para">
+				Type <code class="code">exit</code> twice to continue booting your system as normal. The system will run an SELinux relabel, then reboot again by itself. The re-label may take a while to complete.
+			</div></li><li class="step"><div class="para">
+				Login to your <code class="code">server1</code> machine as root using the new root password.
+			</div></li></ol></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

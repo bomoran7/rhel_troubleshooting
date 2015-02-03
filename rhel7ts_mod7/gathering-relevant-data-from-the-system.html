@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>7.2. Gathering Relevant Data From the System</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="basic-troubleshooting-lab.html" title="Chapter 7. Basic Troubleshooting Labs" /><link rel="prev" href="basic-troubleshooting-lab.html" title="Chapter 7. Basic Troubleshooting Labs" /><link rel="next" href="comparing-files.html" title="7.3. Comparing Files" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""basic-troubleshooting-lab.html">Previous</a> | 
+<a href="comparing-files.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="gathering-relevant-data-from-the-system"></a>7.2. Gathering Relevant Data From the System</h2></div></div></div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Check which log files were updated recently:
+				</div></li></ul></div><pre class="screen">
+# cd /var/log
+# ls -ltr
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Look at the boot time kernel messages:
+				</div></li></ul></div><pre class="screen">
+# less /var/log/dmesg
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Look at the latest kernel messages:
+				</div></li></ul></div><pre class="screen">
+# dmesg|tail
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Look for any entries in <code class="literal">/var/log/messages</code> pertaining to <code class="literal">eth0</code> but exclude any entries containing DHCP:
+				</div></li></ul></div><pre class="screen">
+# grep -i eth0 /var/log/messages*|grep -v DHCP
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Look for the <code class="literal">rsyslogd</code> process in <code class="literal">ps</code> output:
+				</div></li></ul></div><pre class="screen">
+# ps ax |grep rsyslogd
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Look for the rsyslogd or init processes in ps output:
+				</div></li></ul></div><pre class="screen">
+# ps ax | grep -E "rsyslogd|init"
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Look at the first line in <code class="literal">/etc/passwd:</code>
+				</div></li></ul></div><pre class="screen">
+# head -1 /etc/passwd
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Look at the last two lines in <code class="literal">/etc/passwd.</code>
+				</div></li></ul></div><pre class="screen">
+# tail -2 /etc/passwd
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Show the output of a command, then show it again but remove the first line (header text) only:
+				</div></li></ul></div><pre class="screen">
+# swapon -s
+# swapon -s|tail -n +2
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Get the output of <code class="literal">df</code> (<code class="literal">-P</code> removes line breaks), remove the header text, and only print the last column which consists of the mounted filesystems:
+				</div></li></ul></div><pre class="screen">
+# df -P | tail -n +2 |awk '{print $6}'
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Run the <code class="literal">lspci</code> command with extra verbosity:
+				</div></li></ul></div><pre class="screen">
+# lspci -vvv|less
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Install the <code class="literal">screen</code> package.
+				</div></li><li class="listitem"><div class="para">
+					Create a <code class="literal">screen</code> RC file called <code class="literal">/root/monitor.scr</code>:
+				</div></li></ul></div><pre class="screen">
+screen -t "Log Monitor"    1 tail -f /var/log/messages
+screen -t "Command Window" 2 bash
+split
+select 1
+focus
+select 2
+startup_message off
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Start the split screen log monitor:
+				</div></li></ul></div><pre class="screen">
+# screen -c /root/monitor.scr
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Send an update to <code class="literal">/var/log/messages</code>:
+				</div></li></ul></div><pre class="screen">
+# logger "This is a test"
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					To scroll back on the top window use <span class="strong strong"><strong>CTRL+a</strong></span>, release, then press <span class="strong strong"><strong>TAB.</strong></span>
+				</div></li><li class="listitem"><div class="para">
+					Enter copy mode, use <span class="strong strong"><strong>CTRL+a</strong></span>, release, then press <span class="strong strong"><strong>[</strong></span>.
+				</div></li><li class="listitem"><div class="para">
+					When in copy mode you can use j for up and k for down or use the up/down arrow keys.
+				</div></li><li class="listitem"><div class="para">
+					Use <span class="strong strong"><strong>CTRL+a</strong></span> then press <span class="strong strong"><strong>TAB</strong></span> to toggle back to the command line screen.
+				</div></li><li class="listitem"><div class="para">
+					To exit screen, use <span class="strong strong"><strong>CTRL+a</strong></span>, release, then type <span class="strong strong"><strong>:quit&lt;enter&gt;</strong></span>.
+				</div></li></ul></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

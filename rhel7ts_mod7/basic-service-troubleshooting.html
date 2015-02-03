@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>7.5. Basic Service Troubleshooting</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="basic-troubleshooting-lab.html" title="Chapter 7. Basic Troubleshooting Labs" /><link rel="prev" href="running-services-verbosely.html" title="7.4. Running Services Verbosely" /><link rel="next" href="ch08.html" title="Chapter 8. Boot Troubleshooting" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""running-services-verbosely.html">Previous</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="basic-service-troubleshooting"></a>7.5. Basic Service Troubleshooting</h2></div></div></div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Make sure Apache is installed and started:
+				</div></li></ul></div><pre class="screen">
+# yum -y install httpd
+# systemctl start httpd
+# systemctl enable httpd
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Create a default index page:
+				</div></li></ul></div><pre class="screen">
+# echo "This is the default site" &gt; /var/www/html/index.html
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Test the http service locally:
+				</div></li></ul></div><pre class="screen">
+# curl http://localhost
+This is the default site
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Create a new directory and content for Apache:
+				</div></li></ul></div><pre class="screen">
+# mkdir /var/www/mysite
+# echo "This is my site" &gt; /var/www/mysite/index.html
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Create a new configuration file in Apache in a file called <code class="literal">/etc/httpd/conf.d/my.conf</code> for the new content directory (use this text EXACTLY):
+				</div></li></ul></div><pre class="screen">
+# vim /etc/httpd/conf.d/my.conf
+Alias /mysite "/var/www/my_site"
+
+&lt;Directory "/var/www/mysite"&gt;
+    Options Indexes MultiViews FollowSymLinks
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+&lt;/Directory&gt;
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					In a separate terminal (use screen if you like), monitor the Apache error log:
+				</div></li></ul></div><pre class="screen">
+# tail -f /var/log/httpd/error_log
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Restart Apache, then try to access the new content (it should fail):
+				</div></li></ul></div><pre class="screen">
+# systemctl reload httpd
+# curl http://localhost/mysite/
+</pre><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Using the information gained from monitoring the <code class="literal">error_log</code>, fix <code class="literal">my.conf</code> then try to access the site again, be sure to specify the trailing <code class="literal">/</code> in the <code class="literal">curl</code> command (repeat until it’s fixed):
+				</div></li></ul></div><pre class="screen">
+# vim /etc/httpd/conf.d/my.conf
+&lt;fix error&gt;
+# systemctl reload httpd
+# curl http://localhost/mysite/
+This is my site
+</pre></div<center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>10.4. Virtualization Failures</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch10.html" title="Chapter 10. Hardware Issues" /><link rel="prev" href="ch10s03.html" title="10.3. Hardware Failures" /><link rel="next" href="hardware-troubleshooting-lab.html" title="Chapter 11. Hardware Troubleshooting Lab" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""ch10s03.html">Previous</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091247693936"></a>10.4. Virtualization Failures</h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Troubleshoot unique virtualization issues
+					</div></li></ul></div>
+		</div></div><div class="para">
+			System virtualization divides a computer into multiple execution environments running separate operating systems. Each operating system has its own private virtual machine or hardware. These virtual peripherals share the physical hardware resources. However, many hardware related commands may behave differently inside a virtual machine. For example, the above <code class="command">dmidecode</code> output is listing the virtual machine BIOS, not the hardware BIOS. To see the actual hardware, the hardware-related commands need to be executed on the host, at the hypervisor level.
+		</div><h3><a id="idm140091247724800"></a>Virtual Hardware Identification</h3><div class="para">
+			From the hypervisor host, various <code class="command">virsh</code> subcommands can identify what hardware exists and will be supplied to a virtual machine.
+		</div><pre class="screen"><code class="prompt">[root@desktop1 ~]# </code><strong class="userinput"><code>virsh nodeinfo</code></strong>
+CPU model:           x86_64
+CPU(s):              1
+CPU frequency:       3498 MHz
+CPU socket(s):       1
+Core(s) per socket:  1
+Thread(s) per core:  1
+NUMA cell(s):        1
+Memory size:         1870760 KiB
+
+<code class="prompt">[root@desktop1 ~]# </code><strong class="userinput"><code>virsh capabilities</code></strong>
+&lt;capabilities&gt;
+
+  &lt;host&gt;
+    &lt;uuid&gt;bb833240-eab9-11df-9364-c4e14f370acf&lt;/uuid&gt;
+    &lt;cpu&gt;
+      &lt;arch&gt;x86_64&lt;/arch&gt;
+      &lt;model&gt;Westmere&lt;/model&gt;
+      &lt;vendor&gt;Intel&lt;/vendor&gt;
+      &lt;topology sockets='1' cores='2' threads='2'/&gt;
+      &lt;feature name='rdtscp'/&gt;
+      &lt;feature name='xtpr'/&gt;
+      &lt;feature name='tm2'/&gt;
+      &lt;feature name='est'/&gt;
+      &lt;feature name='vmx'/&gt;
+... output omitted ...
+
+
+</pre><div class="para">
+			To identify the devices being supplied to a particular virtual machine, the <code class="command">virsh dumpxml <em class="replaceable"><code>domain</code></em></code> command can display the list of what is being offered, while <code class="command">virsh edit <em class="replaceable"><code>domain</code></em></code> can be used to modify the configuration:
+		</div><pre class="screen"><code class="prompt">[root@desktop1 ~]# </code><strong class="userinput"><code>virsh dumpxml rhel6-guest</code></strong>
+&lt;domain type='kvm'&gt;
+  &lt;name&gt;rhel6-guest&lt;/name&gt;
+  &lt;uuid&gt;5bc93d1a-8c71-ef16-13c0-f8996516cdf3&lt;/uuid&gt;
+  &lt;memory&gt;1048576&lt;/memory&gt;
+  &lt;currentMemory&gt;1048576&lt;/currentMemory&gt;
+  &lt;vcpu&gt;1&lt;/vcpu&gt;
+  &lt;os&gt;
+    &lt;type arch='x86_64' machine='pc-0.14'&gt;hvm&lt;/type&gt;
+    &lt;boot dev='cdrom'/&gt;
+    &lt;boot dev='hd'/&gt;
+    &lt;bootmenu enable='no'/&gt;
+  &lt;/os&gt;
+  &lt;features&gt;
+    &lt;acpi/&gt;
+    &lt;apic/&gt;
+    &lt;pae/&gt;
+  &lt;/features&gt;
+  &lt;clock offset='utc'/&gt;
+  &lt;on_poweroff&gt;destroy&lt;/on_poweroff&gt;
+  &lt;on_reboot&gt;restart&lt;/on_reboot&gt;
+  &lt;on_crash&gt;restart&lt;/on_crash&gt;
+  &lt;devices&gt;
+    &lt;emulator&gt;/usr/bin/qemu-kvm&lt;/emulator&gt;
+    &lt;disk type='block' device='disk'&gt;
+      &lt;driver name='qemu' type='raw'/&gt;
+      &lt;source dev='/dev/vg0/lv_kvmrh6'/&gt;
+      &lt;target dev='vda' bus='virtio'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/&gt;
+    &lt;/disk&gt;
+    &lt;disk type='file' device='cdrom'&gt;
+      &lt;driver name='qemu' type='raw'/&gt;
+      &lt;source file='/home/student/Downloads/rhel-server-6.1-x86_64-dvd.iso'/&gt;
+      &lt;target dev='hdc' bus='ide'/&gt;
+      &lt;readonly/&gt;
+      &lt;address type='drive' controller='0' bus='1' unit='0'/&gt;
+    &lt;/disk&gt;
+    &lt;controller type='ide' index='0'&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/&gt;
+    &lt;/controller&gt;
+    &lt;interface type='network'&gt;
+      &lt;mac address='52:54:00:17:eb:0e'/&gt;
+      &lt;source network='default'/&gt;
+      &lt;model type='virtio'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/&gt;
+    &lt;/interface&gt;
+    &lt;serial type='pty'&gt;
+      &lt;target port='0'/&gt;
+    &lt;/serial&gt;
+    &lt;console type='pty'&gt;
+      &lt;target type='serial' port='0'/&gt;
+    &lt;/console&gt;
+    &lt;input type='tablet' bus='usb'/&gt;
+    &lt;input type='mouse' bus='ps2'/&gt;
+    &lt;graphics type='vnc' port='-1' autoport='yes'/&gt;
+    &lt;sound model='ich6'&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/&gt;
+    &lt;/sound&gt;
+    &lt;video&gt;
+      &lt;model type='cirrus' vram='9216' heads='1'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/&gt;
+    &lt;/video&gt;
+    &lt;memballoon model='virtio'&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/&gt;
+    &lt;/memballoon&gt;
+  &lt;/devices&gt;
+&lt;/domain&gt;
+</pre><div class="para">
+			Note each of the groupings inside of <code class="code">&lt;devices&gt;</code> as what has been defined. This can be correlated to an <code class="command">lspci</code>, <code class="command">lsmod</code> and/or other command run inside of the virtual machine to ensure that correct drivers/modules are loaded.
+		</div><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				The <code class="command">virsh dumpxml <em class="replaceable"><code>domain</code></em></code> command can be used to replicate a virtual machine's configuration to another physical system and imported with the <code class="command">virsh define</code> or <code class="command">virsh create</code> commands.
+			</div></div></div><div class="important"><div class="admonition_header"><p><strong>Important</strong></p></div><div class="admonition"><div class="para">
+				Note the <code class="code">&lt;uuid&gt;</code> setting above must be unique. Do not forget to modify that line along with the <code class="code">&lt;name&gt;</code> and <code class="code">&lt;mac address&gt;</code> tags if replicating a virtual system.
+			</div></div></div><h3><a id="idm140091247434848"></a>Network Management via <code class="command">libvirtd</code></h3><div class="para">
+			There are two networking modes: "virtual network" and "shared device" which can lead to some confusion about configuration and management. By default, as displayed below, the "virtual network" uses <code class="command">dnsmasq</code> on the host to provide DHCP, DNS, and NAT services to the virtual machine.
+		</div><pre class="screen"><code class="prompt">[root@desktop1 ~]# </code><strong class="userinput"><code>virsh net-list</code></strong>
+Name                 State      Autostart
+-----------------------------------------
+default              active     yes       
+
+[root@desktop1 ~]# virsh net-dumpxml default
+&lt;network&gt;
+  &lt;name&gt;default&lt;/name&gt;
+  &lt;uuid&gt;f755528c-074e-4a1e-ada3-d42ee8477fbb&lt;/uuid&gt;
+  &lt;forward mode='nat'/&gt;
+  &lt;bridge name='virbr0' stp='on' delay='0' /&gt;
+  &lt;ip address='192.168.122.1' netmask='255.255.255.0'&gt;
+    &lt;dhcp&gt;
+      &lt;range start='192.168.122.2' end='192.168.122.254' /&gt;
+    &lt;/dhcp&gt;
+  &lt;/ip&gt;
+&lt;/network&gt;
+</pre><div class="para">
+			The above type of networking is generally applicable to development workstations. But virtual servers need more direct access to the physical network itself, and require the creation of a bridge device on the hypervisor host. Look in the Red Hat Enterprise Linux Virtualization Guide for details on creating the bridge device.
+		</div><div class="warning"><div class="admonition_header"><p><strong>Warning</strong></p></div><div class="admonition"><div class="para">
+				Take care that manually specified MAC addresses are unique for the LAN segment, particularly in bridged scenarios.
+			</div></div></div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				Red Hat Enterprise Linux Virtualization Guide
+				<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Chapter 10: Network Configuration
+						</div></li></ul></div>
+			</div><div class="para">
+				<code class="command">virsh</code>(1) man page
+			</div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

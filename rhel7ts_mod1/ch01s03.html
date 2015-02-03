@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>1.3. Monitoring: Detecting Hard Drive Failures</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch01.html" title="Chapter 1. Being Proactive, Part 1" /><link rel="prev" href="ch01s02.html" title="1.2. Monitoring: Centralized Logging" /><link rel="next" href="ch01s04.html" title="1.4. Baselining: Using aide" /></head><body<img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href="ch01s02.html">Previous</a> | 
+<a href="ch01s04.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091252144480"></a>1.3. Monitoring: Detecting Hard Drive Failures</h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Use SMART to identify hard drive failures
+					</div></li></ul></div>
+		</div></div><div class="para">
+			Hard drives die. It is not a question of <span class="bold bold"><strong>if</strong></span> a drive will die but rather <span class="bold bold"><strong>when</strong></span>. Now if we know that a drive is dying we can actually plan its replacement instead of having to respond to an emergency call at 4 a.m. This is where <span class="application"><strong>SMART</strong></span> comes in. It actually means Self-Monitoring, Analysis and Reporting Technology, and it is a feature built in to almost all modern hard drives.
+		</div><div class="para">
+			On your Red Hat Enterprise Linux system there are multiple ways to work with SMART. The first is the SMART-daemon called <code class="command">smartd</code>. <code class="command">smartd</code> polls all of the hard drives every 30 minutes and if it sees a drive is dying it will issue a message to <code class="filename">/var/log/messages</code>. <code class="command">smartd</code> also sends an email message to the root user on the local system, but an alternate, centralized email address can be specified in <code class="filename">/etc/smartd.conf</code>.
+		</div><div class="para">
+			The other method of talking to a SMART-enabled drive is with the <code class="command">smartctl</code> tool. One method of using <code class="command">smartctl</code> is asking only for the overall health status:
+		</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>smartctl -H /dev/sda</code></strong>
+smartctl 6.2 2013-07-26 r3841 [x86_64-linux-3.10.0-123.el7.x86_64] (local build)
+Copyright (C) 2002-13, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF READ SMART DATA SECTION ===
+SMART Health Status: OK
+</pre><div class="para">
+			If we want a bit more detailed information, we can query all the individual counters as well: <code class="command">smartctl -a /dev/sda</code>. The column we are interested in is called <code class="code">RAW_VALUE</code>.
+		</div><div class="para">
+			We can also tell our drive to perform a test immediately by issuing the <code class="command">smartctl -t testtype /dev/sda</code>, where <code class="code">testtype</code> can be any of <code class="code">offline</code>, <code class="code">long</code>, <code class="code">short</code>. There are more tests than these, for a complete list see <code class="command">man 8 smartctl</code>. To view the output of a selftest (<code class="code">long</code>, <code class="code">short</code>) we issue <code class="command">smartctl -l selftest /dev/sda</code>. To get the output of the <code class="code">offline</code> test or the errors from any other test run <code class="command">smartctl -l error /dev/sda</code>.
+		</div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				<code class="command">smartd</code>(8), <code class="command">smartd.conf</code>(5), and <code class="command">smartctl</code>(8) man pages
+			</div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

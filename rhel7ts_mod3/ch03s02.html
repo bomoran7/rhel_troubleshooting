@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>3.2. Managing Configuration Files with git</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch03.html" title="Chapter 3. Being Proactive, Part 2" /><link rel="prev" href="ch03.html" title="Chapter 3. Being Proactive, Part 2" /><link rel="next" href="ch03s03.html" title="3.3. Red Hat Network Satellite 5 Configuration Channels" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href="ch03.html">Previous</a> | 
+<a href="ch03s03.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091254845968"></a>3.2. Managing Configuration Files with <code class="command">git</code></h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Manage multiple versions of files in a revision control system (update, compare, roll back, resolve conflicts)
+					</div></li></ul></div>
+		</div></div><div class="para">
+			Revision control systems are sets of tools that allow administrators to maintain different versions of files in a easy way. Mostly they are used by programmers working on software development projects, but they can also be used to manage changes to configuration files.
+		</div><div class="para">
+			Historically revision control systems (or RCS) have been centralized: we used a single location to store all the files and their history, and then people working with those files would check out a single revision, and commit their changes to the central repository. In the last few years there has been a shift to de-centralized RCS. Authors and contributors to a project can still use a central repository, but everybody working on it can have a complete history as well, working on their own local branches, merging changes where needed.
+		</div><div class="para">
+			<code class="command">rcs</code>, <code class="command">cvs</code> and <code class="command">svn</code> are classic examples of a centralized system, whereas <code class="command">bzr</code> (bazaar-ng) and <code class="command">git</code> are more recent and decentralized tools. In this unit we will take a closer look at <code class="command">git</code>, as it is the revision control system gaining the most momentum managing open source projects. <code class="command">git</code> was designed by Linus Torvalds to work with the ever growing changes to the Linux kernel.
+		</div><div class="Demo Demo"><div class="title">Checkout a Project</div>
+				The <code class="command">git clone</code> command is used to checkout a project from a git repository into a working directory on the local system. The git repository can be hosted locally or on a remote server. 
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							The following command shows how to checkout a project from a local git repository. The path name is specified as the required argument to the <code class="command">clone</code> command. The optional second argument, <code class="command">config-files</code> in the example, is the directory to create with the git working directory.
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>git clone /var/local/config-files.repo config-files</code></strong>
+Initialized empty Git repository in /home/user/config-files/.git/</pre><div class="para">
+							To clone a remote git repository, the path name would include a <code class="code">user@hostname</code> prefix to specify an <code class="command">ssh</code> account to use to access the remote repository: <code class="command">git clone gituser@demo:/var/local/config-files.repo config-files</code>
+						</div></li></ol></div>
+			</div><div class="Demo Demo"><div class="title">Manage Changes Locally</div>
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							Before you start to save updates to files you change, git wants to know who you are. It will complain until you define the following two global settings:
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>git config --global user.email student@server1.example.com</code></strong>
+<code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>git config --global user.name 'Sally Student'</code></strong></pre><div class="para">
+							The above commands will create a configuration file called <code class="filename">~/.gitconfig</code> with the appropriate entries using correct syntax.
+						</div></li><li class="listitem"><div class="para">
+							As you update the configuration files that belong to your repository, you will often want to query git about the status of your updates. The <code class="command">git status</code> command is used for this purpose. The sample output below shows what this command displays when there are not and there are changes to report:
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>cd config-files/</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git status</code></strong>
+# On branch master
+nothing to commit (working directory clean)
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>vim hosts</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git status</code></strong>
+# On branch master
+# Changed but not updated:
+#   (use "git add &lt;file&gt;..." to update what will be committed)
+#   (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+#
+#	modified:   hosts
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+
+Commit the changes to the repository with git commit -a command
+
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git commit -a</code></strong>
+[master 2af592d] Added an entry for host to hosts file.
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git status</code></strong>
+# On branch master
+# Your branch is ahead of 'origin/master' by 1 commit.
+#
+nothing to commit (working directory clean)
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>ls</code></strong>
+cups       hosts.allow  issue.net       ssh          yum.conf
+host.conf  hosts.deny   redhat-release  sysctl.conf  yum.repos.d
+hosts      issue        resolv.conf     yum</pre></li><li class="listitem"><div class="para">
+							Although git does keep track of some file attributes such as whether a file is an executable program or not, it does not preserve file ownership. For example the files below were originally owned by root with a group ownership of lp:
+						</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>ls -l cups/</code></strong>
+total 19
+-rw-rw-r--. 1 student student    0 Sep  8 22:16 classes.conf
+... Output omitted ...</pre></li><li class="listitem"><div class="para">
+							Another useful <code class="command">git</code> subcommand is the <code class="command">diff</code> command. Unlike the <code class="command">status</code> subcommand which displays the states of changed files, the <code class="command">diff</code> subcommand displays the differences in the file contents:
+						</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git diff</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>vim hosts</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git diff</code></strong>
+diff --git a/hosts b/hosts
+index 0a6354e..d008514 100644
+--- a/hosts
++++ b/hosts
+@@ -1,3 +1,4 @@
+ 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+ ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+-192.168.0.250  demo    demo.example.com
++192.168.0.250  demo demo.example.com
++192.168.0.254  instructor instructor.example.com</pre></li><li class="listitem"><div class="para">
+							Once you are satisfied with your changes, use the <code class="command">git commit -a</code> command to store them in the repository. A best practice is to save changes that leave the files in a <span class="quote">“<span class="quote">working</span>”</span> state. The <code class="command">-a</code> option applies the changes to all of the modified files at or below your current working directory.
+						</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git commit -a -m 'added a hosts entry for instructor'</code></strong>
+[master e0c84d2] added a hosts entry for instructor
+ 1 files changed, 2 insertions(+), 1 deletions(-)</pre></li><li class="listitem"><div class="para">
+							The following example shows how to recover a file that has been accidentally deleted. The <code class="command">git checkout</code> command requires the file to recover as an argument, otherwise it only lists missing files. Note this approach can also be used to revert to the repository's version of a file when working changes need to be discarded.
+						</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>ls</code></strong>
+cups       hosts.allow  issue.net       ssh          yum.conf
+host.conf  hosts.deny   redhat-release  sysctl.conf  yum.repos.d
+hosts      issue        resolv.conf     yum
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>rm sysctl.conf</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git status</code></strong>
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+# Changed but not updated:
+#   (use "git add/rm &lt;file&gt;..." to update what will be committed)
+#   (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+#
+#	deleted:    sysctl.conf
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git checkout</code></strong>
+D	sysctl.conf
+Your branch is ahead of 'origin/master' by 2 commits.
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>ls</code></strong>
+cups       hosts.allow  issue.net       ssh       yum.repos.d
+host.conf  hosts.deny   redhat-release  yum
+hosts      issue        resolv.conf     yum.conf
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git checkout -- sysctl.conf</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>ls</code></strong>
+cups       hosts.allow  issue.net       ssh          yum.conf
+host.conf  hosts.deny   redhat-release  sysctl.conf  yum.repos.d
+hosts      issue        resolv.conf     yum</pre></li><li class="listitem"><div class="para">
+							The <code class="command">git add</code> and <code class="command">git rm</code> commands are used to add new files and remove existing files from a project. The changes aren't saved to the repository until they are committed like all other changes.
+						</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git rm yum.conf</code></strong>
+rm 'yum.conf'
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git status</code></strong>
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+# Changes to be committed:
+#   (use "git reset HEAD &lt;file&gt;..." to unstage)
+#
+#	deleted:    yum.conf
+#
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>ls</code></strong>
+cups       hosts.allow  issue.net       ssh          yum.repos.d
+host.conf  hosts.deny   redhat-release  sysctl.conf
+hosts      issue        resolv.conf     yum</pre></li><li class="listitem"><div class="para">
+							In the event you have issued <code class="command">git rm</code> by mistake, the following commands show how to recover from this:
+						</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git reset HEAD yum.conf</code></strong>
+Unstaged changes after reset:
+M	yum.conf
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git status</code></strong>
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+# Changed but not updated:
+#   (use "git add/rm &lt;file&gt;..." to update what will be committed)
+#   (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+#
+#	deleted:    yum.conf
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>ls</code></strong>
+cups       hosts.allow  issue.net       ssh          yum.repos.d
+host.conf  hosts.deny   redhat-release  sysctl.conf
+hosts      issue        resolv.conf     yum
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git checkout -- yum.conf</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git status</code></strong>
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+nothing to commit (working directory clean)
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>ls</code></strong>
+cups       hosts.allow  issue.net       ssh          yum.conf
+host.conf  hosts.deny   redhat-release  sysctl.conf  yum.repos.d
+hosts      issue        resolv.conf     yum</pre></li><li class="listitem"><div class="para">
+							Let's continue the process of removing the <code class="filename">yum.conf</code> configuration file:
+						</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git rm yum.conf</code></strong>
+rm 'yum.conf'
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git commit -a -m 'removed yum.conf'</code></strong>
+[master 97ffb60] removed yum.conf
+ 1 files changed, 0 insertions(+), 23 deletions(-)
+ delete mode 100644 yum.conf</pre></li><li class="listitem"><div class="para">
+							The process is similar for adding a file into the repository. Create the new file, then use the <code class="command">git add</code> command followed by <code class="command">git commit</code>. Note you have to explicitly add the file to the repository with the <code class="command">git add</code> command. <code class="command">git commit -a</code> only commits changes to files already in the repository.
+						</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>touch newfile</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git status</code></strong>
+# On branch master
+# Your branch is ahead of 'origin/master' by 3 commits.
+#
+# Untracked files:
+#   (use "git add &lt;file&gt;..." to include in what will be committed)
+#
+#	newfile
+nothing added to commit but untracked files present (use "git add" to track)
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git add newfile </code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git commit -m 'added newfile'</code></strong>
+[master 3ff06a5] added newfile
+ 0 files changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 newfile</pre></li></ol></div>
+			</div><div class="Demo Demo"><div class="title">Manage Changes in a Central Repository</div>
+				System administrators can use local repositories to manage their own changes to a configuration file, but often there is a need to work together with other administrators to coordinate changes made to configuration files. Working together with other administrators requires use of a central repository that is shared. This course does not discuss how to create a shared repository, but it will discuss how to use one. 
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							The path used to reference a central repository looks a little different than the local path name. Instead of a simple Linux path name, there is a <code class="code">user@hostname</code> prefix that specifies the SSH user account and host name used to access the git repository. The following example shows how to authenticate as <code class="code">gituser</code> on the host <code class="code">demo</code> to access the repository located in the <code class="filename">/var/local/config-files.repo</code> directory:
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>git clone gituser@demo:/var/local/config-files.repo config-files</code></strong>
+Initialized empty Git repository in /home/user/config-files/.git/
+gituser@demo's password: 
+remote: Counting objects: 32, done.
+remote: Compressing objects: 100% (27/27), done.
+Receiving objects: 100% (32/32), 8.12 KiB, done.
+Resolving deltas: 100% (3/3), done.
+remote: Total 32 (delta 3), reused 0 (delta 0)</pre></li><li class="listitem"><div class="para">
+							Once the working directory has been created, the git commands we have already discussed are used to make updates to the local copy of the repository as illustrated by the commands below:
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>cd config-files/</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>vim hosts</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git diff</code></strong>
+diff --git a/hosts b/hosts
+index 849c10d..64809df 100644
+--- a/hosts
++++ b/hosts
+@@ -1,2 +1,4 @@
+ 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+ ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
++
++192.168.0.250  demo demo.example.com
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git commit -a -m 'added a hosts entry for demo'</code></strong>
+[master 4fc2335] added a hosts entry for demo
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+[student@server1 config-files]$ git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 1 commit.
+#
+nothing to commit (working directory clean)
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git rm yum.conf</code></strong>
+rm 'yum.conf'
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git commit -m 'removed yum.conf'</code></strong>
+[master 94f601c] removed yum.conf
+ 1 files changed, 0 insertions(+), 23 deletions(-)
+ delete mode 100644 yum.conf</pre></li><li class="listitem"><div class="para">
+							Once you are satisfied with the changes committed to the working repository, they have to be sent to the original repository. This is the purpose of the <code class="command">push</code> git subcommand. Note that SSH authentication will have to take place in the absence of SSH user keys:
+						</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git push</code></strong>
+gituser@demo's password: 
+Counting objects: 7, done.
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 562 bytes, done.
+Total 5 (delta 3), reused 0 (delta 0)
+To gituser@demo:/var/local/config-files.repo
+   fbaa30e..94f601c  master -&gt; master</pre></li><li class="listitem"><div class="para">
+							Since local updates have to be sent to the central repository with the <code class="command">push</code> git subcommand, updates made by others need to be retrieved with the <code class="command">pull</code> git subcommand. If the changes do not conflict or overlap, others' changes will be applied to the files in the local repository without human interaction:
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>cd config-files/</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>vim hosts</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git commit -a -m 'add desktop2'</code></strong>
+[master 9c41d10] add desktop2
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git push</code></strong>
+gituser@demo's password: 
+Counting objects: 5, done.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 322 bytes, done.
+Total 3 (delta 2), reused 0 (delta 0)
+To gituser@demo:/var/local/config-files.repo
+   94f601c..9c41d10  master -&gt; master
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git pull</code></strong>
+gituser@demo's password: 
+remote: Counting objects: 10, done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 6 (delta 4), reused 0 (delta 0)
+Unpacking objects: 100% (6/6), done.
+From demo:/var/local/config-files.repo
+   9c41d10..aca2c25  master     -&gt; origin/master
+Updating 9c41d10..aca2c25
+Fast-forward
+ hosts |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>cat hosts</code></strong>
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+192.168.0.250	demo demo.example.com
+192.168.0.1	desktop1 desktop1.example.com
+192.168.0.2	desktop2 desktop2.example.com</pre></li></ol></div>
+
+			</div><h3><a id="idm140091249270896"></a>Merging Conflicting Changes</h3><div class="para">
+			When working with a shared repository, it is best to pull recent, committed changes by others before making changes of your own. Although this minimizes the chances of a conflict, sometimes conflicts will still arise as two administrators update overlapping parts of the same file. The sample commands below show the steps taken and the changes made by a local user on the <code class="filename">resolv.conf</code> file. Note an initial <code class="command">git pull</code> command is issued to make sure there aren't any outstanding changes committed by others.
+		</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git pull</code></strong> 
+gituser@demo's password: 
+Already up-to-date.
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>cat resolv.conf</code></strong> 
+# Generated by NetworkManager
+domain example.com
+search example.com
+nameserver 192.168.0.254
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>vim resolv.conf</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>cat resolv.conf</code></strong>
+# Generated by NetworkManager
+domain example.com
+search example.com
+nameserver 192.168.0.254
+nameserver 127.0.0.1
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git commit -a -m 'added localhost entry'</code></strong>
+[master 2ae15fe] added localhost entry
+ 1 files changed, 1 insertions(+), 0 deletions(-)</pre><div class="para">
+			While local changes were made to the file and committed to the local repository, other changes were made by another system administrator and pushed to the central repository. So when the more recent push is made, an error message is displayed:
+		</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git push</code></strong>
+gituser@demo's password: 
+To gituser@demo:/var/local/config-files.repo
+ ! [rejected]        master -&gt; master (non-fast-forward)
+error: failed to push some refs to 'gituser@demo:/var/local/config-files.repo'
+To prevent you from losing history, non-fast-forward updates were rejected
+Merge the remote changes before pushing again.  See the 'Note about
+fast-forwards' section of 'git push --help' for details.</pre><div class="para">
+			The way to take corrective action is to pull the committed changes and if there is a conflict, resolve the conflict by hand. Also the resolved file will have to be committed then pushed into the shared repository. Note in the example output below that some of the changes were automatically applied because they did not conflict.
+		</div><pre class="screen"><code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git pull</code></strong>
+gituser@demo's password: 
+remote: Counting objects: 5, done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 3 (delta 1), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), done.
+From demo:/var/local/config-files.repo
+   aca2c25..09ba1fe  master     -&gt; origin/master
+Auto-merging resolv.conf
+CONFLICT (content): Merge conflict in resolv.conf
+Automatic merge failed; fix conflicts and then commit the result.
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>cat resolv.conf</code></strong> 
+search example.com
+nameserver 192.168.0.254
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+nameserver 127.0.0.1
+=======
+nameserver 192.168.0.253
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 09ba1fecf9d47c3e43b0c21f7f3b3098b596cb34
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>vim resolv.conf</code></strong>
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git commit -a -m 'added localhost entry with .253 entry'</code></strong>
+[master 4f895ad] added localhost entry with .253 entry
+<code class="prompt">[student@server1 config-files]$ </code><strong class="userinput"><code>git push</code></strong>
+gituser@demo's password: 
+Counting objects: 10, done.
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 637 bytes, done.
+Total 6 (delta 3), reused 0 (delta 0)
+To gituser@demo:/var/local/config-files.repo
+   09ba1fe..4f895ad  master -&gt; master</pre><div class="Demo Demo"><div class="title">Create a Local Repository</div>
+				The following commands illustrate how to create a git repository. 
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							First, the directory which will serve as the repository is created and the user changes into it. The <code class="command">git init</code> command initializes the repository and creates a <code class="filename">.git</code> subdirectory.
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>mkdir my-files</code></strong>
+<code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>cd my-files</code></strong>
+<code class="prompt">[student@server1 my-files]$ </code><strong class="userinput"><code>git init</code></strong>
+Initialized empty Git repository in /home/user/my-files/.git/</pre></li><li class="listitem"><div class="para">
+							After the repository is created, the user uses the <code class="command">git add</code> in combination with the <code class="command">git commit</code> commands to populate the repository with files.
+						</div><pre class="screen"><code class="prompt">[student@server1 my-files]$ </code><strong class="userinput"><code>cp ~/.bashrc bashrc</code></strong>
+<code class="prompt">[student@server1 my-files]$ </code><strong class="userinput"><code>cp ~/.bash_profile bash_profile</code></strong>
+<code class="prompt">[student@server1 my-files]$ </code><strong class="userinput"><code>git add .</code></strong>
+<code class="prompt">[student@server1 my-files]$ </code><strong class="userinput"><code>git commit -m 'account config files'</code></strong>
+[master (root-commit) 1cb15e8] account config files
+ 2 files changed, 20 insertions(+), 0 deletions(-)
+ create mode 100644 bash_profile
+ create mode 100644 bashrc
+<code class="prompt">[student@server1 my-files]$ </code><strong class="userinput"><code>vim bash_profile</code></strong>
+<code class="prompt">[student@server1 my-files]$ </code><strong class="userinput"><code>git diff</code></strong>
+diff --git a/bash_profile b/bash_profile
+index 3dc099a..a3679c5 100644
+--- a/bash_profile
++++ b/bash_profile
+@@ -8,5 +8,6 @@ fi
+ # User specific environment and startup programs
+ 
+ PATH=$PATH:$HOME/bin
++EDITOR=vim
+ 
+-export PATH
++export PATH EDITOR
+<code class="prompt">[student@server1 my-files]$ </code><strong class="userinput"><code>git commit -a -m 'defined EDITOR environment variable'</code></strong>
+[master 41a0605] defined EDITOR environment variable
+ 1 files changed, 2 insertions(+), 1 deletions(-)</pre></li></ol></div>
+			</div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				<code class="command">git</code>(1) and <code class="command">gittutorial</code>(7) man pages
+			</div><div class="para">
+				<code class="filename">/usr/share/doc/git-*/</code> <div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							General <code class="command">git</code> Documentation
+						</div></li></ul></div>
+			</div></div></div></div>><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

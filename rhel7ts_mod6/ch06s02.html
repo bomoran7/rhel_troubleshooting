@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>6.2. Gathering Additional Information from Logs</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch06.html" title="Chapter 6. Basic Troubleshooting Techniques and Procedures" /><link rel="prev" href="ch06.html" title="Chapter 6. Basic Troubleshooting Techniques and Procedures" /><link rel="next" href="ch06s03.html" title="6.3. Problem Replication" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""ch06.html">Previous</a> | 
+<a href="ch06s03.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091237102992"></a>6.2. Gathering Additional Information from Logs</h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Extract needed information from logs
+					</div></li><li class="listitem"><div class="para">
+						Tune applications to produce more output
+					</div></li></ul></div>
+		</div></div><div class="Demo Demo"><div class="title">Review Available Logs</div>
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							Read log files first! The <code class="filename">/var/log/messages</code> file is usually a good place to start. Although not all applications and subsystems log directly into the <code class="filename">messages</code> file, most place some notification. If no information is found in <code class="filename">/var/log/messages</code> and you are not sure which logs are being written, then the command <code class="command">ls -lt /var/log/</code> will list the entries in order of when they were last modified, with the newest at the top. Use the <code class="command">-r</code> flag to reverse the ordering, i.e., newest at the bottom.
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>ls -ltr /var/log</code></strong></pre></li><li class="listitem"><div class="para">
+							The contents of the kernel's log buffer can be read by using the <code class="command">dmesg</code> command. Due to the finite size of the buffer, the oldest log messages are dropped once the buffer fills up. (On x86/x86-64, the size of this buffer is 128 KB in RHEL 5.) During the boot process, a snapshot of the current contents of the log buffer is saved to <code class="filename">/var/log/dmesg</code> near the end of the <code class="filename">rc.sysinit</code> script. Otherwise, kernel messages will generally be logged to <code class="filename">/var/log/messages</code>. Checking the kernel's ring buffer or changing <span class="application"><strong>rsyslog</strong></span> to log kernel messages to a file is worth while as kernel oops will often only be visible from here or directly on the console (which for a remotely managed system may be infrequently seen). Kernel oops are often caused when a part of the kernel suffers a failure, as the kernel is modular this may result in the ejection of that module (and dependencies) from the stack. This may or may not result in a kernel panic or have an obvious effect on a running system depending on which module/stack was affected.
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>less /var/log/dmesg</code></strong>
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>dmesg | less</code></strong></pre></li><li class="listitem"><div class="para">
+							Additionally, some log files contain potentially useful information but can be hard to interpret such as <code class="filename">/var/log/audit/audit.log</code>. There may be additional tools that can help analyze these logs such as <code class="command">ausearch</code> for searching the audit log for specific events. For example, the following command would find all audit messages of type AVC (access vector cache): <code class="command">ausearch -m AVC</code>.
+						</div><pre class="screen"><code class="prompt">[root@desktop1 ~]# </code><strong class="userinput"><code>less /var/log/audit/audit.log</code></strong>
+<code class="prompt">[root@desktop1 ~]# </code><strong class="userinput"><code>ausearch -m AVC</code></strong> # SELinux messages
+<code class="prompt">[root@desktop1 ~]# </code><strong class="userinput"><code>ausearch -m LOGIN</code></strong> # Login messages</pre></li></ol></div>
+			</div><div class="Demo Demo"><div class="title">Parsing Logs</div>
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							Log files can contain many irrelevant entries when troubleshooting. You can remove irrelevant entries by using <code class="command">grep -v 'ARG' /var/log/messages</code>. If you want to lose other messages as well without starting multiple <code class="command">grep</code> commands, use extended regular expressions :
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>grep -Ev 'ARG1|ARG2|ARG3' /var/log/messages</code></strong></pre></li><li class="listitem"><div class="para">
+							The <code class="command">grep</code> command displays the lines in a file that match a pattern. It can also process standard input when the filename argument is omitted. The pattern may contain regular expression metacharacters and so it is considered good practice to always quote your regular expressions. The following command shows how <code class="command">grep</code> can be used to search for a pattern in a log file:
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>grep 'sudo' /var/log/secure</code></strong>
+Feb 14 08:41:03 host sudo: ghacker : TTY=pts/1 ; PWD=/home/ghacker ; USER=root ; COMMAND=/bin/bash -l</pre></li><li class="listitem"><div class="para">
+							To list only lines of output from ps, which lists running processes, that contain the string "init":
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>ps ax | grep 'init'</code></strong></pre></li><li class="listitem"><div class="para">
+							Common <code class="command">grep</code> options include:
+						</div><div class="table"><a id="idm140091251534496"></a><p class="title"><strong>Table 6.2. Common <code class="command">grep</code> options</strong></p><div class="table-contents"><table summary="Common grep options"><colgroup><col width="50%" class="c1" /><col width="50%" class="c2" /></colgroup><thead><tr><th class="">
+											Option
+										</th><th class="">
+											Function
+										</th></tr></thead><tbody><tr><td class="">
+											<code class="command">-i</code>
+										</td><td class="">
+											<div class="para">
+												Perform a case-insensitive search
+											</div>
+
+										</td></tr><tr><td class="">
+											<code class="command">-v</code>
+										</td><td class="">
+											<div class="para">
+												Exclude lines that contain the pattern
+											</div>
+										</td></tr><tr><td class="">
+											<code class="command">-c</code>
+										</td><td class="">
+											<div class="para">
+												Display a count of lines with the matching pattern
+											</div>
+										</td></tr><tr><td class="">
+											<code class="command">-l</code>
+										</td><td class="">
+											<div class="para">
+												Only list file names, do not display the matched lines
+											</div>
+										</td></tr><tr><td class="">
+											<code class="command">-n</code>
+										</td><td class="">
+											<div class="para">
+												Precede matched line with line numbers
+											</div>
+										</td></tr><tr><td class="">
+											<code class="command">--color</code>
+										</td><td class="">
+											<div class="para">
+												Highlight the matched string
+											</div>
+										</td></tr><tr><td class="">
+											<code class="command">-A</code>, <code class="command">-B</code>
+										</td><td class="">
+											<div class="para">
+												When followed by a number, these options print that many lines after or before each match. This is useful for seeing the context in which a match appears within a file.
+											</div>
+										</td></tr><tr><td class="">
+											<code class="command">-r</code>
+										</td><td class="">
+											<div class="para">
+												Perform a recursive search of files, starting with the named directory
+											</div>
+										</td></tr></tbody></table></div></div><br class="table-break" /><div class="para">
+							To change the color that <code class="command">--color</code> uses (red by default), use the <code class="code">GREP_COLOR</code> variable:
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>export GREP_COLOR='01;34'</code></strong></pre><div class="para">
+							Read the <code class="filename">dir_colors(5)</code> man page, or look at <code class="filename">/etc/DIR_COLORS</code> for more information and examples.
+						</div></li><li class="listitem"><div class="para">
+							Using <code class="command">head</code> and <code class="command">tail</code> wisely can greatly increase our system administration capabilities. Running <code class="command">tail -f logfile</code> in one terminal, while running commands in another terminal we can see our logfiles scroll by in real time.
+						</div><div class="para">
+							But also in scripting and output parsing can we gain some great benefits from using the command line flags to their utmost. Take for example the output of <code class="command">ps aux</code>:
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]# </code><strong class="userinput"><code>ps aux</code></strong>
+USER   PID %CPU %MEM    VSZ   RSS TTY    STAT START   TIME COMMAND
+root     1  0.0  0.0   2112   632 ?      Ss   Apr16   0:05 init [5]
+root     2  0.0  0.0      0     0 ?      S&lt;   Apr16   0:00 [kthread]
+root     3  0.0  0.0      0     0 ?      S&lt;   Apr16   0:04 [migration/0]
+...</pre><div class="para">
+							All the columns are there, but we have this annoying first row making it hard for us to automatically parse this output with another tool. Using <code class="command">tail</code> we can lose this first line by telling <code class="command">tail</code> we want to start at line number 2: <code class="command">ps aux | tail -n +2</code>. Note how with <code class="command">tail</code> the behavior changes when we put a <code class="command">+</code> sign in front of the number of lines we want. With <code class="command">head</code> on the other hand we have to specify a negative number to get the behavior to change.
+						</div><pre class="screen"><code class="prompt">[student@server1 ~]# </code><strong class="userinput"><code>ps aux | tail -n +2</code></strong>
+root     1  0.0  0.0   2112   632 ?      Ss   Apr16   0:05 init [5]
+root     2  0.0  0.0      0     0 ?      S&lt;   Apr16   0:00 [kthread]
+root     3  0.0  0.0      0     0 ?      S&lt;   Apr16   0:04 [migration/0]
+...</pre></li></ol></div>
+			</div><div class="Demo Demo"><div class="title">Increasing Verbosity</div>
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							Often when trying to debug problems it is helpful to be able to increase the verbosity of the output or logging generated. For some applications, it may be possible to increase the verbosity level in the application's configuration file. For example, for the CUPS printing system, in <code class="filename">/etc/cups/cupsd.conf</code> changing <code class="code">LogLevel Info</code> to <code class="code">LogLevel Debug</code> or even <code class="code">LogLevel Debug2</code> will vastly increase the information logged under <code class="filename">/var/log/cups</code>.
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>grep LogLevel /etc/cups/cupsd.conf</code></strong></pre></li><li class="listitem"><div class="para">
+							Some command line tools have an option that increases the verbosity level, often the <code class="command">-v</code> flag. Some tools will take multiple flags to steadily increase the debugging output. For example, the <code class="command">tcpdump</code> command will take <code class="command">-v</code> or <code class="command">-vv</code> or even <code class="command">-vvv</code> to increase debug output. If you are not sure which flag to pass, use the <code class="command">-h</code> or <code class="command">--</code> help flags to get usage and help output.
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>lspci -vvv | less</code></strong></pre></li></ol></div>
+			</div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				<code class="command">grep</code>(1), <code class="filename">dir_colors</code>(5), <code class="command">head</code>(1) and <code class="command">tail</code>(1) man pages
+			</div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

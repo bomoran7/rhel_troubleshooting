@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>8.2. Repairing Common Boot Issues</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch08.html" title="Chapter 8. Boot Troubleshooting" /><link rel="prev" href="ch08.html" title="Chapter 8. Boot Troubleshooting" /><link rel="next" href="ch08s03.html" title="8.3. Repairing File System Issues at Boot" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""ch08.html">Previous</a> | 
+<a href="ch08s03.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091326281280"></a>8.2. Repairing Common Boot Issues</h2></div></div></div><div class="highlights"><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+				Use <code class="code">rd.break</code> on the kernel command line to interrupt the boot process before control is handed over from the <code class="code">initramfs</code>. The system will be mounted (read-only) under <code class="filename">/sysroot</code>.
+			</div></li><li class="listitem"><div class="para">
+				<code class="command">journalctl</code> can be used to filter for specific boots with the <code class="option">-b</code> option.
+			</div></li><li class="listitem"><div class="para">
+				The <code class="command">debug-shell.service</code> service can be used to get an automatic <code class="code">root</code> shell early during boot.
+			</div></li></ul></div></div><h3><a id="idm140091248597152"></a>Objectives</h3><div class="para">
+		After completing this section, students should be able to repair common boot issues.
+	</div><h3><a id="idm140091248595936"></a>Recovering the root password</h3><div class="para">
+		One task that every system administrator should be able to accomplish is recovering a lost <code class="code">root</code> password. If the administrator is still logged in, either as an unprivileged user but with full <code class="command">sudo</code> access, or as <code class="code">root</code>, this task is trivial. When the administrator is not logged in, this task becomes slightly more involved.
+	</div><div class="para">
+		A number of methods exist to set a new <code class="code">root</code> password. A system administrator could, for example, boot the system using a Live CD, mount the root file system from there, and edit <code class="filename">/etc/shadow</code>. In this section, we will explore a method that does not require the use of external media.
+	</div><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+			On Red Hat Enterprise Linux 6 and earlier, an administrator could boot the system into <em class="firstterm">runlevel 1</em>, and be presented with a root prompt. The closest analogs to runlevel 1 on a Red Hat Enterprise Linux 7 machine are the <code class="code">rescue.target</code> and <code class="code">emergency.target</code> targets, both of which require the <code class="code">root</code> password to log in.
+		</div></div></div><div class="para">
+		On Red Hat Enterprise Linux 7, it is possible to have the scripts that run from the <code class="code">initramfs</code> pause at certain points, provide a <code class="code">root</code> shell, and then continue when that shell exits. While this is mostly meant for debugging, it can also be used to recover a lost <code class="code">root</code> password:
+	</div><div class="procedure"><ol class="1"><li class="step"><div class="para">
+				Reboot the system.
+			</div></li><li class="step"><div class="para">
+				Interrupt the boot loader countdown by pressing any key.
+			</div></li><li class="step"><div class="para">
+				Move the cursor to the entry that needs to be booted.
+			</div></li><li class="step"><div class="para">
+				Press <code class="code">e</code> to edit the selected entry.
+			</div></li><li class="step"><div class="para">
+				Move the cursor to the kernel command line (the line that starts with <code class="code">linux16</code>).
+			</div></li><li class="step"><div class="para">
+				Append <code class="code">rd.break</code> (this will break just before control is handed from the <code class="code">initramfs</code> to the actual system).
+			</div><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+					The <code class="code">initramfs</code> prompt will show up on whatever console is specified <span class="emphasis"><em>last</em></span> on the kernel commandline.
+				</div></div></div></li><li class="step"><div class="para">
+				Press <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>x</strong></span> to boot with the changes.
+			</div></li></ol></div><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+			Pre-built images may place multiple console= arguments to the kernel to support a wide array of implementation scenarios. The caveat with rd.break is that while many of the kernel messages will be sent to all consoles, the prompt will ultimately use whichever console is last. If you do not get your prompt, you may want to temporarily re-order the console= arguments.
+		</div></div></div><div class="para">
+		At this point, a <code class="code">root</code> shell will be presented, with the root file system for the actual system mounted read-only on <code class="filename">/sysroot</code>.
+	</div><div class="important"><div class="admonition_header"><p><strong>Important</strong></p></div><div class="admonition"><div class="para">
+			SELinux is not yet enabled at this point, so any new files being created will not have an SELinux context assigned to them. Keep in mind that some tools (such as <code class="command">passwd</code>) first create a new file, then move it in place of the file they are intended to edit, effectively creating a new file without an SELinux context.
+		</div></div></div><div class="para">
+		To recover the <code class="code">root</code> password from this point, use the following procedure:
+	</div><div class="procedure"><ol class="1"><li class="step"><div class="para">
+				Remount <code class="filename">/sysroot</code> as read-write.
+			</div><pre class="screen"><code class="prompt">switch_root:/# </code><strong class="userinput"><code>mount -oremount,rw /sysroot</code></strong></pre></li><li class="step"><div class="para">
+				Switch into a <code class="command">chroot</code> jail, where <code class="filename">/sysroot</code> is treated as the root of the file system tree.
+			</div><pre class="screen"><code class="prompt">switch_root:/# </code><strong class="userinput"><code>chroot /sysroot</code></strong></pre></li><li class="step"><div class="para">
+				Set a new root password:
+			</div><pre class="screen"><code class="prompt">sh-4.2# </code><strong class="userinput"><code>passwd root</code></strong></pre></li><li class="step"><div class="para">
+				Make sure that all unlabeled files (including <code class="filename">/etc/shadow</code> at this point) get relabeled during boot.
+			</div><pre class="screen"><code class="prompt">sh-4.2# </code><strong class="userinput"><code>touch /.autorelabel</code></strong></pre></li><li class="step"><div class="para">
+				Type <code class="command">exit</code> twice. The first will exit the <code class="command">chroot</code> jail, and the second will exit the <code class="code">initramfs</code> debug shell.
+			</div></li></ol></div><div class="para">
+		At this point, the system will continue booting, perform a full SELinux relabel, then reboot again.
+	</div><h3><a id="idm140091335289104"></a>Using journalctl</h3><div class="para">
+		It can be useful to look at the logs of previous (failed) boots. If the <code class="command">journald</code> log has been made persistent, this can be done with the <code class="command">journalctl</code> tool.
+	</div><div class="para">
+		First make sure that you have persistent <code class="command">journald</code> logging enabled:
+	</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>mkdir -p -m2775 /var/log/journal</code></strong>
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>chown :systemd-journal /var/log/journal</code></strong>
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>killall -USR1 systemd-journald</code></strong></pre><div class="para">
+		To inspect the log files for a previous boot, use the <code class="option">-b</code> option to <code class="command">journalctl</code>. Without any arguments, the <code class="option">-b</code> option will filter output only to messages pertaining to this boot, but with a negative number as an argument, it will filter on previous boots. For example:
+	</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>journalctl -b-1 -p err</code></strong></pre><div class="para">
+		This command will show all messages rated as an error or worse from the previous boot.
+	</div><h3><a id="idm140091254919472"></a>Diagnose and repair systemd boot issues</h3><div class="para">
+		If there are problems during the starting of services, there are a couple of tools available to system administrators that can help with debugging and/or troubleshooting:
+	</div><div class="formalpara"><div class="title">Early debug shell</div>
+			By running <code class="command">systemctl enable debug-shell.service</code>, a <code class="code">root</code> shell will be spawned on <code class="code">TTY9</code> (<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F9</strong></span>) early during the boot sequence. This shell is automatically logged in as root, so that an administrator can use some of the other debugging tools while the system is still booting.
+		</div><div class="warning"><div class="admonition_header"><p><strong>Warning</strong></p></div><div class="admonition"><div class="para">
+			Do not forget to disable the <code class="code">debug-shell.service</code> service when you are done debugging, as it leaves an unauthenticated root shell open to anyone with local console access.
+		</div></div></div><div class="formalpara"><div class="title">Emergency and rescue targets</div>
+			By appending either <code class="code">systemd.unit=rescue.target</code> or <code class="code">systemd.unit=emergency.target</code> to the kernel command line from the boot loader, the system will spawn into a special rescue or emergency shell instead of starting normally. Both of these shells require the <code class="code">root</code> password. The <code class="code">emergency</code> target keeps the root file system mounted read-only, while <code class="code">rescue.target</code> waits for <code class="code">sysinit.target</code> to complete first so that more of the system will be initialized (e.g., logging, file systems, etc.).
+		</div><div class="para">
+		These shells can be used to fix any issues that prevent the system from booting normally; for example, a dependency loop between services, or an incorrect entry in <code class="filename">/etc/fstab</code>. Exiting from these shells will continue with the regular boot process.
+	</div><div class="formalpara"><div class="title">Stuck jobs</div>
+			During startup, <code class="command">systemd</code> spawns a number of jobs. If some of these jobs cannot complete, they will block other jobs from running. To inspect the current job list, an administrator can use the command <code class="command">systemctl list-jobs</code>. Any jobs listed as <code class="code">running</code> must complete before the jobs listed as <code class="code">waiting</code> can continue.
+		</div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+			<code class="command">dracut.cmdline</code>(7), <code class="command">systemd-journald</code>(8), <code class="command">journalctl</code>(1), <code class="command">sushell</code>(8), and <code class="command">systemctl</code>(1) man pages
+		</div><div class="para">
+			<code class="filename">/usr/lib/systemd/system/debug-shell.service</code>
+		</div></div></div></div<center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

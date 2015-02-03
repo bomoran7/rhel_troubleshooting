@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 15.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="453.733"
+   height="256.37598"
+   viewBox="0 0 453.733 256.37597"
+   enable-background="new 0 0 531.5 367.32"
+   xml:space="preserve"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Boot_Process.svg"><metadata
+   id="metadata153"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs151"><inkscape:perspective
+     sodipodi:type="inkscape:persp3d"
+     inkscape:vp_x="0 : 183.66 : 1"
+     inkscape:vp_y="0 : 1000 : 0"
+     inkscape:vp_z="531.5 : 183.66 : 1"
+     inkscape:persp3d-origin="265.75 : 122.44 : 1"
+     id="perspective155" /></defs><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1283"
+   inkscape:window-height="798"
+   id="namedview149"
+   showgrid="false"
+   inkscape:zoom="0.64249155"
+   inkscape:cx="224.983"
+   inkscape:cy="129.73212"
+   inkscape:window-x="0"
+   inkscape:window-y="25"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1" />
+<rect
+   x="336.82901"
+   y="184.76497"
+   width="104.725"
+   height="32.068001"
+   id="rect3"
+   style="fill:#bcbebf" />
+<rect
+   x="227.82901"
+   y="184.76497"
+   width="104.725"
+   height="32.068001"
+   id="rect5"
+   style="fill:#bcbebf" />
+<path
+   d="m 453.233,249.87598 c 0,3.314 -2.687,6 -6,6 H 6.5 c -3.314,0 -6,-2.686 -6,-6 v -141.502 c 0,-3.312 2.686,-6 6,-6 h 440.733 c 3.313,0 6,2.688 6,6 v 141.502 l 0,0 z"
+   id="path7"
+   style="fill:none;stroke:#60605b" />
+<g
+   id="g9"
+   transform="translate(-40.767,-60.129025)">
+	<g
+   id="g11">
+		<line
+   stroke-miterlimit="10"
+   x1="385.90799"
+   y1="238.23"
+   x2="289.5"
+   y2="189.66"
+   id="line13"
+   style="fill:none;stroke:#60605b;stroke-miterlimit:10" />
+		<g
+   id="g15">
+			<polygon
+   points="385.416,234.853 393.735,242.387 382.763,240.02 "
+   id="polygon17"
+   style="fill:#60605b" />
+		</g>
+	</g>
+</g>
+<text
+   font-size="8.5307"
+   id="text19"
+   style="font-size:8.53069973px;fill:#60605b;font-family:Interstate-Bold"
+   x="252.442"
+   y="204.76497">start-ttys.conf</text>
+
+<text
+   font-size="8.5307"
+   id="text21"
+   style="font-size:8.53069973px;fill:#60605b;font-family:Interstate-Bold"
+   x="365.2623"
+   y="204.76497">prefdm.conf</text>
+
+<rect
+   x="12.829"
+   y="184.76497"
+   width="104.725"
+   height="57.068001"
+   id="rect23"
+   style="fill:#bcbebf" />
+<g
+   id="g25"
+   transform="translate(-40.767,-60.129025)">
+	<g
+   id="g27">
+		<text
+   transform="translate(88.1357,257.2437)"
+   enable-background="new    "
+   id="text29"><tspan
+     x="0"
+     y="0"
+     font-size="8.5307"
+     id="tspan31"
+     style="font-size:8.53069973px;fill:#60605b;font-family:Interstate-Bold">rcS.conf </tspan><tspan
+     x="-28.044001"
+     y="8.9720001"
+     font-size="7.4765"
+     id="tspan33"
+     style="font-size:7.47650003px;fill:#60605b;font-family:LiberationMono">/etc/rc.d/rc.sysinit </tspan><tspan
+     x="-10.098"
+     y="17.943001"
+     font-size="7.4765"
+     id="tspan35"
+     style="font-size:7.47650003px;fill:#60605b;font-family:LiberationMono">/etc/inittab </tspan><tspan
+     x="-20.586"
+     y="35.887001"
+     font-size="7.4765"
+     id="tspan37"
+     style="font-size:7.47650003px;fill:#60605b;font-family:Interstate-RegularItalic">send “runlevel” event</tspan></text>
+
+	</g>
+</g>
+<g
+   id="g39"
+   transform="translate(-40.767,-60.129025)">
+	<rect
+   x="163.354"
+   y="244.894"
+   width="100.725"
+   height="57.068001"
+   id="rect41"
+   style="fill:#bcbebf" />
+	<text
+   transform="translate(199.7139,257.9116)"
+   enable-background="new    "
+   id="text43"><tspan
+     x="0"
+     y="0"
+     font-size="8.5307"
+     id="tspan45"
+     style="font-size:8.53069973px;fill:#60605b;font-family:Interstate-Bold">rc.conf </tspan><tspan
+     x="-12.917"
+     y="8.9709997"
+     font-size="7.4765"
+     id="tspan47"
+     style="font-size:7.47650003px;fill:#60605b;font-family:LiberationMono">/etc/rc.d/rc </tspan><tspan
+     x="-30.863001"
+     y="17.943001"
+     font-size="7.4765"
+     id="tspan49"
+     style="font-size:7.47650003px;fill:#60605b;font-family:LiberationMono">/etc/rc.d/rc[0-6].d/ </tspan><tspan
+     x="-13.051"
+     y="35.887001"
+     font-size="7.4765"
+     id="tspan51"
+     style="font-size:7.47650003px;fill:#60605b;font-family:Interstate-RegularItalic">send “rc” event</tspan></text>
+
+</g>
+<rect
+   x="-2.0513449"
+   y="175.86606"
+   transform="matrix(0.92742469,-0.37400996,0.37400996,0.92742469,0,0)"
+   width="87.996658"
+   height="10.998707"
+   id="rect53"
+   style="fill:none" />
+<text
+   transform="matrix(0.92742469,-0.37400996,0.37400996,0.92742469,0,0)"
+   font-size="7.4765"
+   id="text55"
+   style="font-size:7.47630119px;fill:#60605b;font-family:Interstate-RegularItalic"
+   x="20.280111"
+   y="181.35353">on “startup”</text>
+
+<rect
+   x="-5.2194538"
+   y="225.23355"
+   transform="matrix(0.77169348,-0.63599463,0.63599463,0.77169348,0,0)"
+   width="88.00174"
+   height="11.000093"
+   id="rect57"
+   style="fill:none" />
+<text
+   transform="matrix(0.77165303,-0.63604371,0.63604371,0.77165303,0,0)"
+   font-size="7.4765"
+   id="text59"
+   style="font-size:7.475986px;fill:#60605b;font-family:Interstate-RegularItalic"
+   x="15.917526"
+   y="230.63257">on “runlevel”</text>
+
+<rect
+   x="292.58145"
+   y="-7.2158833"
+   transform="matrix(0.89114327,0.45372203,-0.45372203,0.89114327,0,0)"
+   width="87.995728"
+   height="10.996466"
+   id="rect61"
+   style="fill:none" />
+<text
+   transform="matrix(0.89114327,0.45372203,-0.45372203,0.89114327,0,0)"
+   font-size="7.4765"
+   id="text63"
+   style="font-size:7.47613716px;fill:#60605b;font-family:Interstate-RegularItalic"
+   x="324.11029"
+   y="-1.8037516">on “rc”</text>
+
+<rect
+   x="178.56599"
+   y="122.86397"
+   width="88"
+   height="11"
+   id="rect65"
+   style="fill:none" />
+<text
+   font-size="7.4765"
+   id="text67"
+   style="font-size:7.47650003px;fill:#60605b;font-family:LiberationMono"
+   x="200.13341"
+   y="128.28067">/etc/init/</text>
+
+<rect
+   x="201.733"
+   y="112.11397"
+   width="41.666"
+   height="8.5"
+   id="rect69"
+   style="fill:none" />
+<text
+   font-size="8.5307"
+   id="text71"
+   style="font-size:8.53069973px;fill:#60605b;font-family:Interstate-Bold"
+   x="215.78481"
+   y="118.33237">init</text>
+
+<rect
+   x="270.56702"
+   y="69.780975"
+   width="41.667"
+   height="8.5"
+   id="rect73"
+   style="fill:none" />
+<text
+   font-size="8.5307"
+   id="text75"
+   style="font-size:8.53069973px;fill:#60605b;font-family:Interstate-Bold"
+   x="278.94199"
+   y="75.999374">kernel</text>
+
+<rect
+   x="120.90001"
+   y="0.11297563"
+   width="41.667"
+   height="8.5"
+   id="rect77"
+   style="fill:none" />
+<text
+   font-size="8.5307"
+   id="text79"
+   style="font-size:8.53069973px;fill:#60605b;font-family:Interstate-Bold"
+   x="131.3687"
+   y="6.3313751">BIOS</text>
+
+<rect
+   x="200.983"
+   y="28.780979"
+   width="41.666"
+   height="8.5"
+   id="rect81"
+   style="fill:none" />
+<text
+   font-size="8.5307"
+   id="text83"
+   style="font-size:8.53069973px;fill:#60605b;font-family:Interstate-Bold"
+   x="209.6217"
+   y="34.999374">GRUB</text>
+
+<rect
+   x="163.983"
+   y="42.196972"
+   width="115.668"
+   height="18.833"
+   id="rect85"
+   style="fill:none" />
+<text
+   font-size="7.4765"
+   id="text87"
+   style="font-size:7.47650003px;fill:#60605b;font-family:LiberationMono"
+   x="176.9503"
+   y="47.614174">/boot/grub/grub.conf</text>
+
+<g
+   id="g89"
+   transform="translate(-40.767,-60.129025)">
+	<g
+   id="g91">
+		<line
+   stroke-miterlimit="10"
+   x1="196.5"
+   y1="236.492"
+   x2="249"
+   y2="194.66"
+   id="line93"
+   style="fill:none;stroke:#60605b;stroke-miterlimit:10" />
+		<g
+   id="g95">
+			<polygon
+   points="199.806,237.338 189.648,242.114 196.06,232.899 "
+   id="polygon97"
+   style="fill:#60605b" />
+		</g>
+	</g>
+</g>
+<g
+   id="g99"
+   transform="translate(-40.767,-60.129025)">
+	<g
+   id="g101">
+		<line
+   stroke-miterlimit="10"
+   x1="305.16699"
+   y1="236.826"
+   x2="335.32599"
+   y2="212.808"
+   id="line103"
+   style="fill:none;stroke:#60605b;stroke-miterlimit:10" />
+		<g
+   id="g105">
+			<polygon
+   points="308.474,237.672 298.315,242.448 304.727,233.233 "
+   id="polygon107"
+   style="fill:#60605b" />
+		</g>
+	</g>
+</g>
+<g
+   id="g109"
+   transform="translate(-40.767,-60.129025)">
+	<g
+   id="g111">
+		<line
+   stroke-miterlimit="10"
+   x1="110.25"
+   y1="234.492"
+   x2="226.5"
+   y2="187.16"
+   id="line113"
+   style="fill:none;stroke:#60605b;stroke-miterlimit:10" />
+		<g
+   id="g115">
+			<polygon
+   points="113.815,235.718 102.894,238.305 111.061,230.604 "
+   id="polygon117"
+   style="fill:#60605b" />
+		</g>
+	</g>
+</g>
+<g
+   id="g119"
+   transform="translate(-40.767,-60.129025)">
+	<g
+   id="g121">
+		<line
+   stroke-miterlimit="10"
+   x1="283.5"
+   y1="166.825"
+   x2="317.83301"
+   y2="139.827"
+   id="line123"
+   style="fill:none;stroke:#60605b;stroke-miterlimit:10" />
+		<g
+   id="g125">
+			<polygon
+   points="286.807,167.671 276.648,172.447 283.06,163.232 "
+   id="polygon127"
+   style="fill:#60605b" />
+		</g>
+	</g>
+</g>
+<g
+   id="g129"
+   transform="translate(-40.767,-60.129025)">
+	<g
+   id="g131">
+		<line
+   stroke-miterlimit="10"
+   x1="309.83301"
+   y1="129.16"
+   x2="279.16699"
+   y2="113.827"
+   id="line133"
+   style="fill:none;stroke:#60605b;stroke-miterlimit:10" />
+		<g
+   id="g135">
+			<polygon
+   points="309.341,125.783 317.66,133.317 306.688,130.95 "
+   id="polygon137"
+   style="fill:#60605b" />
+		</g>
+	</g>
+</g>
+<g
+   id="g139"
+   transform="translate(-40.767,-60.129025)">
+	<g
+   id="g141">
+		<line
+   stroke-miterlimit="10"
+   x1="228.16701"
+   y1="87.825996"
+   x2="197.5"
+   y2="72.492996"
+   id="line143"
+   style="fill:none;stroke:#60605b;stroke-miterlimit:10" />
+		<g
+   id="g145">
+			<polygon
+   points="227.674,84.449 235.994,91.983 225.021,89.616 "
+   id="polygon147"
+   style="fill:#60605b" />
+		</g>
+	</g>
+</g>
+</svg>

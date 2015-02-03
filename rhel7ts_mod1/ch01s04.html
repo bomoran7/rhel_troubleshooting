@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>1.4. Baselining: Using aide</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch01.html" title="Chapter 1. Being Proactive, Part 1" /><link rel="prev" href="ch01s03.html" title="1.3. Monitoring: Detecting Hard Drive Failures" /><link rel="next" href="ch01s05.html" title="1.5. Baselining: Using sar" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href="ch01s03.html">Previous</a> | 
+<a href="ch01s05.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091245918128"></a>1.4. Baselining: Using <span class="application"><strong>aide</strong></span></h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Configure <code class="command">aide</code> to track file system changes
+					</div></li></ul></div>
+		</div></div><div class="para">
+			Good baseline monitoring of systems is extremely helpful when troubleshooting. A good baseline of system activity and use can be used to compare when a system appears to be behaving erratically, or more actively to report when a system is operating outside of specified parameters.
+		</div><div class="para">
+			It can also be used to tighten security. As we monitor, we can build up trends for our systems and networks over time. Using these, we can more easily spot events outside of the norm, which could be attempts to gain access to our systems or a rogue system already under the control of external influences.
+		</div><div class="para">
+			Deciding what to monitor is dependent on the work that a system does. For database servers or file servers, then disk space, service availability and load might be important. For a desktop system we might just check to see that it is up and running. Data gained from longer term monitoring can be used outside of the purely technical. We can use it to measure the growth of system load over time and to predict when a new server or file store might be required. We can use it to measure how improvements made are impacting service availability and therefore helping work flow and numerous others.
+		</div><div class="para">
+			<span class="application"><strong>AIDE</strong></span>, the <span class="application"><strong>Advanced Intrusion Detection Environment</strong></span>, is a tool to check the integrity of files on the system. Essentially, when the system is in a known <span class="bold bold"><strong>good</strong></span> state, it is used to scan the system and collect information about installed files, their checksums, their permissions, and other characteristics. This information is placed in a database file which can be stored off-line. If you later suspect some compromise or other problem with file integrity, you can use AIDE to compare the state of the system against the stored database and check for any changes.
+		</div><div class="Demo Demo"><div class="title">Steps to deploy AIDE</div>
+				Example of deploying <span class="application"><strong>AIDE</strong></span> on <code class="code">server1</code>.
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							Install the <code class="code">aide</code> package.
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>yum install -y aide</code></strong>
+... Output omitted ...</pre></li><li class="listitem"><div class="para">
+							Customize <code class="command">/etc/aide.conf</code> to your liking.
+						</div><div class="para">
+							Example <code class="filename">/etc/aide.conf</code> file:
+						</div><pre class="screen">@@define DBDIR /var/lib/aide <img class="callout" src="Common_Content/images/1.png" alt="1" border="0" id="aide-dbdir" />
+@@define LOGDIR /var/log/aide
+
+database=file:@@{DBDIR}/aide.db.gz <img class="callout" src="Common_Content/images/2.png" alt="2" border="0" id="aide-db" />
+database_out=file:@@{DBDIR}/aide.db.new.gz <img class="callout" src="Common_Content/images/3.png" alt="3" border="0" id="aide-dbout" />
+gzip_dbout=yes
+report_url=file:@@{LOGDIR}/aide.log <img class="callout" src="Common_Content/images/4.png" alt="4" border="0" id="aide-report" />
+report_url=stdout
+
+# R is short for p+i+n+u+g+s+m+c+acl+selinux+xattrs+md5
+NORMAL = R+rmd160+sha256 <img class="callout" src="Common_Content/images/5.png" alt="5" border="0" id="aide-groupdef" />
+PERMS = p+i+u+g+acl+selinux
+
+/ NORMAL <img class="callout" src="Common_Content/images/6.png" alt="6" border="0" id="aide-selection" />
+!/etc/.*~
+/root/..* PERMS</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#aide-dbdir"><img class="callout" src="Common_Content/images/1.png" alt="1" border="0" id="aide-dbdir" /></a> </p></td><td valign="top" align="left"><div class="para">
+									Defining macros that can be used in <code class="filename">/etc/aide.conf</code>
+								</div></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#aide-db"><img class="callout" src="Common_Content/images/2.png" alt="2" border="0" id="aide-db" /></a> </p></td><td valign="top" align="left"><div class="para">
+									Configuration directive defining the location of the AIDE database. Note that this example uses a macro defined above.
+								</div></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#aide-dbout"><img class="callout" src="Common_Content/images/3.png" alt="3" border="0" id="aide-dbout" /></a> </p></td><td valign="top" align="left"><div class="para">
+									Configuration directive defining the location in which <code class="command">aide --init</code> will save a newly created database file.
+								</div></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#aide-report"><img class="callout" src="Common_Content/images/4.png" alt="4" border="0" id="aide-report" /></a> </p></td><td valign="top" align="left"><div class="para">
+									Where the results of <code class="command">aide --check</code> will be reported. Note that multiple locations are allowed.
+								</div></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#aide-groupdef"><img class="callout" src="Common_Content/images/5.png" alt="5" border="0" id="aide-groupdef" /></a> </p></td><td valign="top" align="left"><div class="para">
+									Group definition line. Files selected by AIDE in group <code class="code">NORMAL</code> will store information about its regular permissions, inodes, number of links, user and group, size, mtime and ctime, POSIX ACLs, SELinux context, extended attributes, MD5 checksum, RMD160 checksum, and SHA256 checksum.
+								</div></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#aide-selection"><img class="callout" src="Common_Content/images/6.png" alt="6" border="0" id="aide-selection" /></a> </p></td><td valign="top" align="left"><div class="para">
+									Selection lines. The first one adds all files under <code class="filename">/</code> to be checked in group <code class="code">NORMAL</code>; the second exempts all files in <code class="filename">/etc</code> that end in <code class="code">~</code> from being checked; the third specifies that all files under <code class="filename">/root</code> that start with a <code class="code">.</code> should be checked in group <code class="code">PERMS</code> only. Note that this uses regular expression syntax.
+								</div></td></tr></table></div></li><li class="listitem"><div class="para">
+							Run <code class="command">/usr/sbin/aide --init</code> to build the initial database. This can take a while as it creates a gzipped-database called <code class="filename">/var/lib/aide/aide.db.new.gz</code>
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>aide --init</code></strong> 
+
+AIDE, version 0.15.1
+
+### AIDE database at /var/lib/aide/aide.db.new.gz initialized.
+
+</pre></li><li class="listitem"><div class="para">
+							Store <code class="filename">/etc/aide.conf</code>, <code class="filename">/usr/sbin/aide</code> and <code class="filename">/var/lib/aide/aide.db.new.gz</code> in a secure location (not on this same system!). Alternatively, extract a signature of these files so they can be verified in the future.
+						</div></li><li class="listitem"><div class="para">
+							Copy <code class="filename">/var/lib/aide/aide.db.new.gz</code> to <code class="filename">/var/lib/aide/aide.db.gz</code> (the expected name).
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>cd /var/lib/aide</code></strong> 
+<code class="prompt">[root@server1 aide]# </code><strong class="userinput"><code>cp aide.db.new.gz aide.db.gz</code></strong> 
+<code class="prompt">[root@server1 aide]# </code><strong class="userinput"><code>cd</code></strong></pre></li></ol></div>
+			</div><div class="Demo Demo"><div class="title">Verifying system integrity with AIDE</div>
+				This example, demonstrates testing file integrity using <code class="code">aide</code>.
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							Modify a file on your system to be different.
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>echo shiny new &gt;&gt; /bin/tcsh</code></strong></pre></li><li class="listitem"><div class="para">
+							Run <code class="command">/usr/sbin/aide --check</code> to check your system for inconsistencies.
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>aide --check</code></strong> 
+AIDE 0.15.1 found differences between database and filesystem!!
+Start timestamp: 2014-12-15 08:22:04
+
+Summary:
+  Total number of files:        107530
+  Added files:                  9
+  Removed files:                0
+  Changed files:                10
+
+
+---------------------------------------------------
+Added files:
+---------------------------------------------------
+
+... Output omitted ...
+
+---------------------------------------------------
+Changed files:
+---------------------------------------------------
+
+changed: /usr/bin/tcsh
+... Output omitted ...</pre></li><li class="listitem"><div class="para">
+							Results will be displayed on standard output and in <code class="filename">/var/log/aide/aide.log</code> by default.
+						</div></li><li class="listitem"><div class="para">
+							If you know about these changes (say after an update or you have edited a file yourself) you can run <code class="command">aide --update</code> to update your database. Do not forget to store it in a secure location again.
+						</div></li></ol></div>
+			</div><div class="warning"><div class="admonition_header"><p><strong>Warning</strong></p></div><div class="admonition"><div class="para">
+				If a system has had its root account or kernel compromised by an attacker, the installed version of AIDE or local copy of the database file may have been modified by the attacker or respond with false results. In this case, it is a good idea to boot the system with a known good operating system environment with an off-line copy of AIDE and a copy of the backed-up AIDE database. Also, you should never rely solely on an IDS (intrusion detection system) to check for changes. Some loadable-kernel-module rootkits can trick programs into reading other data than what is actually stored in a file. IDS is an add-on to your existing security framework, but should never be used as your sole security measure.
+			</div></div></div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				<code class="command">aide</code>(1) and <code class="command">aide.conf</code>(5) man pages
+			</div><div class="para">
+				<code class="filename">/usr/share/doc/aide-*/README.quickstart</code> <div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							AIDE Quick Start
+						</div></li></ul></div>
+			</div><div class="para">
+				<code class="filename">/usr/share/doc/aide-*/manual.html</code> <div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							AIDE Manual
+						</div></li></ul></div>
+			</div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

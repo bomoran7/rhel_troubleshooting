@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>8.3. Repairing File System Issues at Boot</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch08.html" title="Chapter 8. Boot Troubleshooting" /><link rel="prev" href="ch08s02.html" title="8.2. Repairing Common Boot Issues" /><link rel="next" href="ch08s04.html" title="8.4. Repairing Boot Loader Issues" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""ch0802.html">Previous</a> | 
+<a href="ch06804.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091258487664"></a>8.3. Repairing File System Issues at Boot</h2></div></div></div><div class="highlights"><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+				<code class="command">systemd</code> will display an emergency shell in most cases dealing with file system issues.
+			</div></li><li class="listitem"><div class="para">
+				The <code class="code">emergency.target</code> target can also be used to diagnose and fix file system issues.
+			</div></li></ul></div></div><h3><a id="idm140091254944816"></a>Objectives</h3><div class="para">
+		After completing this section, students should be able to repair file system issues during boot.
+	</div><div class="para">
+		Errors in <code class="filename">/etc/fstab</code> and corrupt file systems can stop a system from booting. In most cases, <code class="command">systemd</code> will actually continue to boot after a timeout, or drop to an emergency repair shell that requires the <code class="code">root</code> password.
+	</div><div class="para">
+		The following table lists some common errors and their results.
+	</div><div class="informaltable"><table><colgroup><col width="50%" class="c1" /><col width="50%" class="c2" /></colgroup><thead><tr><th class="">
+						Problem
+					</th><th class="">
+						Result
+					</th></tr></thead><tbody><tr><td class="">
+						<div class="para">
+							Corrupt file system
+						</div>
+
+					</td><td class="">
+						<div class="para">
+							<code class="command">systemd</code> will attempt a <code class="command">fsck</code>. If the problem is too serious for an automatic fix, the user will be prompted to run <code class="command">fsck</code> manually from an emergency shell.
+						</div>
+
+					</td></tr><tr><td class="">
+						<div class="para">
+							Non-existent device/UUID referenced in <code class="filename">/etc/fstab</code>
+						</div>
+
+					</td><td class="">
+						<div class="para">
+							<code class="command">systemd</code> will wait for a set amount of time, waiting for the device to become available. If the device does not become available, the user is dropped to an emergency shell after the timeout.
+						</div>
+
+					</td></tr><tr><td class="">
+						<div class="para">
+							Non-existent mount point in <code class="filename">/etc/fstab</code>
+						</div>
+
+					</td><td class="">
+						<div class="para">
+							<code class="command">systemd</code> creates the mount point if possible; otherwise, it drops to an emergency shell.
+						</div>
+
+					</td></tr><tr><td class="">
+						<div class="para">
+							Incorrect mount option specified in <code class="filename">/etc/fstab</code>
+						</div>
+
+					</td><td class="">
+						<div class="para">
+							The user is dropped to an emergency shell.
+						</div>
+
+					</td></tr></tbody></table></div><div class="para">
+		In all cases, an administrator can also utilize the <code class="code">emergency.target</code> target to diagnose and fix the issue, since no file systems will be mounted before the emergency shell is displayed.
+	</div><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+			When using the automatic recovery shell during file system issues, do not forget to issue a <code class="command">systemctl daemon-reload</code> after editing <code class="filename">/etc/fstab</code>. Without this reload, <code class="command">systemd</code> will continue using the old version.
+		</div></div></div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+			<code class="command">systemd-fsck</code>(8), <code class="command">systemd-fstab-generator</code>(3), and <code class="command">systemd.mount</code>(5) man pages
+		</div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

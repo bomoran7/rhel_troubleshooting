@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 8. Boot Troubleshooting</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="prev" href="basic-service-troubleshooting.html" title="7.5. Basic Service Troubleshooting" /><link rel="next" href="ch08s02.html" title="8.2. Repairing Common Boot Issues" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+ 
+<a href="ch08s02.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h1 class="title"><a id="idm140091252031808"></a>Chapter 8. Boot Troubleshooting</h1></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="ch08.html#idm140091333918064">8.1. The Red Hat Enterprise Linux Boot Process</a></span></dt><dt><span class="section"><a href="ch08s02.html">8.2. Repairing Common Boot Issues</a></span></dt><dt><span class="section"><a href="ch08s03.html">8.3. Repairing File System Issues at Boot</a></span></dt><dt><span class="section"><a href="ch08s04.html">8.4. Repairing Boot Loader Issues</a></span></dt></dl></div><div class="abstract"><p class="title"><strong>Abstract</strong></p><div class="para">
+			<div class="informaltable"><table><colgroup><col width="50%" class="c1" /><col width="50%" class="c2" /></colgroup><thead><tr><th class="" colspan="2">
+								Overview
+							</th></tr></thead><tbody><tr><td class="">
+								<span class="bold bold"><strong>Goal</strong></span>
+							</td><td class="">
+								To troubleshoot the Red Hat Enterprise Linux boot process.
+							</td></tr><tr><td class="">
+								<span class="bold bold"><strong>Objectives</strong></span>
+							</td><td class="">
+								<div class="para">
+									<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+												Describe the Red Hat Enterprise Linux boot process.
+											</div></li><li class="listitem"><div class="para">
+												Repair common boot issues.
+											</div></li><li class="listitem"><div class="para">
+												Repair file system issues at boot.
+											</div></li><li class="listitem"><div class="para">
+												Repair boot loader problems.
+											</div></li></ul></div>
+
+								</div>
+
+							</td></tr></tbody></table></div>
+
+		</div></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="idm140091333918064"></a>8.1. The Red Hat Enterprise Linux Boot Process</h2></div></div></div><div class="highlights"><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+				The Red Hat Enterprise Linux 7 boot process can be broken down into four steps:
+			</div><div class="orderedlist"><ol><li class="listitem"><div class="para">
+						Hardware (BIOS/UEFI)
+					</div></li><li class="listitem"><div class="para">
+						Boot loader (<code class="command">grub2</code>)
+					</div></li><li class="listitem"><div class="para">
+						<code class="code">kernel</code> and <code class="code">initramfs</code>
+					</div></li><li class="listitem"><div class="para">
+						<code class="command">systemd</code>
+					</div></li></ol></div></li><li class="listitem"><div class="para">
+				<code class="command">systemctl reboot</code> and <code class="command">systemctl poweroff</code> reboot and power down a system, respectively.
+			</div></li><li class="listitem"><div class="para">
+				<code class="command">systemctl isolate <em class="replaceable"><code>desired.target</code></em></code> switches to a new target at runtime.
+			</div></li><li class="listitem"><div class="para">
+				<code class="command">systemctl get-default</code> and <code class="command">systemctl set-default</code> can be used to query and set the default target.
+			</div></li><li class="listitem"><div class="para">
+				<code class="code">systemd.unit=</code> on the kernel command line selects a different target at boot.
+			</div></li></ul></div></div><h3><a id="idm140091250468240"></a>Objectives</h3><div class="para">
+		After completing this section, students should be able to describe and influence the Red Hat Enterprise Linux boot process.
+	</div><h3><a id="idm140091245099056"></a>The Red Hat Enterprise Linux 7 boot process</h3><div class="para">
+		Modern computer systems are complex combinations of hardware and software. Starting from an undefined, powered-down state to a running system with a (graphical) login prompt requires a large number of pieces of hardware and software to work together. The following list gives a high-level overview of the tasks involved for a physical <code class="code">x86_64</code> system booting Red Hat Enterprise Linux 7. The list for <code class="code">x86_64</code> virtual machines is roughly the same, but some of the hardware-specific steps are handled in software by the hypervisor.
+	</div><div class="orderedlist"><ol><li class="listitem"><div class="para">
+				The machine is powered on. The system firmware (either modern UEFI or more old-fashioned BIOS) runs a <em class="firstterm">Power On Self Test</em> (POST), and starts to initialize some of the hardware.
+			</div><div class="para">
+				Configured using: The system BIOS/UEFI configuration screens, typically reached by pressing a certain key combination—e.g., <span class="keycap"><strong>F2</strong></span>—early during the boot process.
+			</div></li><li class="listitem"><div class="para">
+				The system firmware searches for a bootable device, either configured in the UEFI boot firmware or by searching for a <em class="firstterm">Master Boot Record</em> (MBR) on all disks, in the order configured in the BIOS.
+			</div><div class="para">
+				Configured using: The system BIOS/UEFI configuration screens, typically reached by pressing a certain key combination—e.g., <span class="keycap"><strong>F2</strong></span>—early during the boot process.
+			</div></li><li class="listitem"><div class="para">
+				The system firmware reads a <em class="firstterm">boot loader</em> from disk, then passes control of the system to the boot loader. On a Red Hat Enterprise Linux 7 system, this will typically be <code class="command">grub2</code>.
+			</div><div class="para">
+				Configured using: <code class="command">grub2-install</code>
+			</div></li><li class="listitem"><div class="para">
+				The boot loader loads its configuration from disk, and presents the user with a menu of possible configurations to boot.
+			</div><div class="para">
+				Configured using: <code class="filename">/etc/grub.d/</code>, <code class="filename">/etc/default/grub</code>, and (not manually) <code class="filename">/boot/grub2/grub.cfg</code>.
+			</div></li><li class="listitem"><div class="para">
+				After the user has made a choice (or an automatic timeout has happened), the boot loader loads the configured kernel and <em class="firstterm">initramfs</em> from disk and places them in memory. An <code class="code">initramfs</code> is a <code class="command">gzip</code>-ed <code class="command">cpio</code> archive containing kernel modules for all hardware necessary at boot, init scripts, and more. On Red Hat Enterprise Linux 7, the <code class="code">initramfs</code> contains an entire usable system by itself.
+			</div><div class="para">
+				Configured using: <code class="filename">/etc/dracut.conf</code>
+			</div></li><li class="listitem"><div class="para">
+				The boot loader hands control of the system over to the kernel, passing in any options specified on the kernel command line in the boot loader, and the location of the <code class="code">initramfs</code> in memory.
+			</div><div class="para">
+				Configured using: <code class="filename">/etc/grub.d/</code>, <code class="filename">/etc/default/grub</code>, and (not manually) <code class="filename">/boot/grub2/grub.cfg</code>.
+			</div></li><li class="listitem"><div class="para">
+				The kernel initializes all hardware for which it can find a driver in the <code class="code">initramfs</code>, then executes <code class="filename">/sbin/init</code> from the <code class="code">initramfs</code> as <code class="code">PID 1</code>. On Red Hat Enterprise Linux 7, the <code class="code">initramfs</code> contains a working copy of <code class="command">systemd</code> as <code class="filename">/sbin/init</code>, as well as a <code class="command">udev</code> daemon.
+			</div><div class="para">
+				Configured using: <code class="code">init=</code> command-line parameter.
+			</div></li><li class="listitem"><div class="para">
+				The <code class="command">systemd</code> instance from the <code class="code">initramfs</code> executes all units for the <code class="code">initrd.target</code> target. This includes mounting the actual root file system on <code class="filename">/sysroot</code>.
+			</div><div class="para">
+				Configured using: <code class="filename">/etc/fstab</code>
+			</div></li><li class="listitem"><div class="para">
+				The kernel root file system is switched (pivoted) from the <code class="code">initramfs</code> root file system to the system root file system that was previously mounted on <code class="filename">/sysroot</code>. <code class="command">systemd</code> then re-executes itself using the copy of <code class="command">systemd</code> installed on the system.
+			</div></li><li class="listitem"><div class="para">
+				<code class="command">systemd</code> looks for a default target, either passed in from the kernel command line or configured on the system, then starts (and stops) units to comply with the configuration for that target, solving dependencies between units automatically. In its essence, a <code class="command">systemd</code> target is a set of units that should be activated to reach a desired system state. These targets will typically include at least a text-based login or a graphical login screen being spawned.
+			</div><div class="para">
+				Configured using: <code class="filename">/etc/systemd/system/default.target</code>, <code class="filename">/etc/systemd/system/</code>
+			</div></li></ol></div><h3><a id="idm140091245685408"></a>Boot, reboot, and shut down</h3><div class="para">
+		To power off or reboot a running system from the command line, administrators can use the <code class="command">systemctl</code> command.
+	</div><div class="para">
+		<code class="command">systemctl poweroff</code> will stop all running services, unmount all file systems (or remount them read-only when they cannot be unmounted), and then power down the system.
+	</div><div class="para">
+		<code class="command">systemctl reboot</code> will stop all running services, unmount all file systems, and then reboot the system.
+	</div><div class="para">
+		For the ease of backward compatibility, the <code class="command">poweroff</code> and <code class="command">reboot</code> commands still exist, but in Red Hat Enterprise Linux 7 they are symbolic links to the <code class="command">systemctl</code> tool.
+	</div><div class="important"><div class="admonition_header"><p><strong>Important</strong></p></div><div class="admonition"><div class="para">
+			<code class="command">systemctl halt</code> and <code class="command">halt</code> are also available to stop the system, but unlike their <code class="command">poweroff</code> equivalents, these commands do <span class="emphasis"><em>not</em></span> power off the system; they bring a system down to a point where it is safe to manually power it off.
+		</div></div></div><h3><a id="idm140091255018896"></a>Selecting a systemd target</h3><div class="para">
+		A <code class="command">systemd</code> target is a set of <code class="command">systemd</code> units that should be started to reach a desired state. The most important of these targets are listed in the following table.
+	</div><div class="informaltable"><table><colgroup><col width="50%" align="left" class="c1" /><col width="50%" align="left" class="c2" /></colgroup><thead><tr><th class="" align="left">
+						Target
+					</th><th class="" align="left">
+						Purpose
+					</th></tr></thead><tbody><tr><td class="" align="left">
+						<code class="code">graphical.target</code>
+					</td><td class="" align="left">
+						System supports multiple users, graphical and text-based logins.
+					</td></tr><tr><td class="" align="left">
+						<code class="code">multi-user.target</code>
+					</td><td class="" align="left">
+						System supports multiple users, text-based logins only.
+					</td></tr><tr><td class="" align="left">
+						<code class="code">rescue.target</code>
+					</td><td class="" align="left">
+						<code class="code">sulogin</code> prompt, basic system initialization completed.
+					</td></tr><tr><td class="" align="left">
+						<code class="code">emergency.target</code>
+					</td><td class="" align="left">
+						<code class="code">sulogin</code> prompt, <code class="command">initramfs</code> pivot complete and system root mounted on <code class="filename">/</code> read-only.
+					</td></tr></tbody></table></div><div class="para">
+		It is possible for a target to be a part of another target; for example, the <code class="code">graphical.target</code> includes <code class="code">multi-user.target</code>, which in turn depends on <code class="code">basic.target</code> and others. These dependencies can be viewed from the command line with the following command:
+	</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl list-dependencies graphical.target | grep target</code></strong></pre><div class="para">
+		An overview of all available targets can be viewed with:
+	</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl list-units --type=target --all</code></strong></pre><div class="para">
+		An overview of all targets installed on disk can be viewed with:
+	</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl list-unit-files --type=target --all</code></strong></pre><div class="formalpara"><div class="title">Selecting a target at runtime</div>
+			On a running system, administrators can choose to switch to a different target using the <code class="command">systemctl isolate</code> command; for example: 
+<pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl isolate multi-user.target</code></strong></pre>
+
+		</div><div class="para">
+		Isolating a target will stop all services not required by that target (and its dependencies), and start any required services that have not yet been started.
+	</div><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+			Not all targets can be isolated. Only targets that have <code class="code">AllowIsolate=yes</code> set in their unit files can be isolated; for example, the <code class="code">graphical.target</code> target can be isolated, but the <code class="code">cryptsetup.target</code> target cannot.
+		</div></div></div><div class="formalpara"><div class="title">Setting a default target</div>
+			When the system starts, and control is passed over to <code class="command">systemd</code> from the <code class="code">initramfs</code>, <code class="command">systemd</code> will try to activate the <code class="code">default.target</code> target. Normally the <code class="code">default.target</code> target will be a symbolic link (in <code class="filename">/etc/systemd/system/</code>) to either <code class="code">graphical.target</code> or <code class="code">multi-user.target</code>.
+		</div><div class="para">
+		Instead of editing this symbolic link by hand, the <code class="command">systemctl</code> tool comes with two commands to manage this link: <code class="command">get-default</code> and <code class="command">set-default</code>.
+	</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl get-default</code></strong>
+multi-user.target
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl set-default graphical.target</code></strong>
+rm '/etc/systemd/system/default.target'
+ln -s '/usr/lib/systemd/system/graphical.target' '/etc/systemd/system/default.target'
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl get-default</code></strong>
+graphical.target</pre><div class="formalpara"><div class="title">Selecting a different target at boot time</div>
+			To select a different target at boot time, a special option can be appended to the kernel command line from the boot loader: <code class="code">systemd.unit=</code>.
+		</div><div class="para">
+		For example, to boot the system into a rescue shell where configuration changes can be made without (almost) any service running, the following can be appended from the interactive boot loader menu before starting:
+	</div><pre class="screen">systemd.unit=rescue.target</pre><div class="para">
+		This configuration change will only affect a single boot, making it a useful tool for troubleshooting the boot process.
+	</div><div class="para">
+		To use this method of selecting a different target, use the following procedure for Red Hat Enterprise Linux 7 systems:
+	</div><div class="procedure"><ol class="1"><li class="step"><div class="para">
+				(Re)boot the system.
+			</div></li><li class="step"><div class="para">
+				Interrupt the boot loader menu countdown by pressing any key.
+			</div></li><li class="step"><div class="para">
+				Move the cursor to the entry to be started.
+			</div></li><li class="step"><div class="para">
+				Press <span class="keycap"><strong>e</strong></span> to edit the current entry.
+			</div></li><li class="step"><div class="para">
+				Move the cursor to the line that starts with <code class="code">linux16</code>. This is the kernel command line.
+			</div></li><li class="step"><div class="para">
+				Append <code class="code">systemd.unit=<em class="replaceable"><code>desired.target</code></em></code>.
+			</div></li><li class="step"><div class="para">
+				Press <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>x</strong></span> to boot with these changes.
+			</div></li></ol></div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+			<code class="command">bootup</code>(7), <code class="command">dracut.bootup</code>(7), <code class="command">systemd.target</code>(5), <code class="command">systemd.special</code>(7), <code class="command">sulogin</code>(8), and <code class="command">systemctl</code>(1) man pages
+		</div><div class="para">
+			<code class="command">info grub2</code> (<span class="emphasis"><em>GNU GRUB Manual</em></span>)
+		</div></div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

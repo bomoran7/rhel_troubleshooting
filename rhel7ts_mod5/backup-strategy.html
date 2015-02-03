@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>5.2. Backup Strategy</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="backups-and-disaster-recovery.html" title="Chapter 5. Backups and Disaster Recovery" /><link rel="prev" href="backups-and-disaster-recovery.html" title="Chapter 5. Backups and Disaster Recovery" /><link rel="next" href="choosing-a-backup-strategy.html" title="5.3. Choosing a Backup Strategy" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href="backups-and-disaster-recovery.html">Previous</a> | 
+<a href="choosing-a-backup-strategy.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="backup-strategy"></a>5.2. Backup Strategy</h2></div></div></div><div class="para">
+			One of the most neglected tasks of system administration is making backups on a regular basis or making them at all.
+		</div><div class="para">
+			There are three instances when a solid backup plan can pay off:
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					When a system malfunctions and files are lost
+				</div></li><li class="listitem"><div class="para">
+					When a user or the system administrator deletes or corrupts a file by accident
+				</div></li><li class="listitem"><div class="para">
+					When a catastrophic disaster occurs
+				</div></li></ul></div><div class="para">
+			Even when you use disk redundancy such as RAID, you still need to back up files. Although RAID provides fault tolerance—helpful in the event of disk failure—it does not help when a disaster occurs or when a file is corrupted or accidentally removed.
+		</div><div class="para">
+			There are several low level backup options built into RHEL such as dd, tar, cpio, and dump that can handle files or disks on a per system basis. Use of these tools alone is not considered a solid enterprise backup strategy.
+		</div><div class="para">
+			RHEL includes two open source enterprise level backup solutions called <span class="strong strong"><strong>Amanda</strong></span> and <span class="strong strong"><strong>Bacula.</strong></span> Because these solutions use a client/server architecture, they are considered usable for an enterprise for backup purposes.
+		</div><div class="para">
+			There are many enterprise class backup solutions available that work well with RHEL such as <span class="strong strong"><strong>Symantec NetBackup</strong></span> and <span class="strong strong"><strong>Arconis</strong></span>.
+		</div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

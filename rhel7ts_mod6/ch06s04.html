@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>6.4. Comparing/Isolating/Testing</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch06.html" title="Chapter 6. Basic Troubleshooting Techniques and Procedures" /><link rel="prev" href="ch06s03.html" title="6.3. Problem Replication" /><link rel="next" href="basic-troubleshooting-lab.html" title="Chapter 7. Basic Troubleshooting Labs" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""ch0603.html">Previous</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091324686640"></a>6.4. Comparing/Isolating/Testing</h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Compare performance or configuration differences with other systems or baseline
+					</div></li><li class="listitem"><div class="para">
+						Perform root-cause analysis
+					</div></li><li class="listitem"><div class="para">
+						Verify the fix to an isolated problem
+					</div></li></ul></div>
+		</div></div><h3><a id="idm140091324681104"></a>Comparing</h3><div class="para">
+			It is very useful to compare a broken system with a similar system that is functioning properly. The systems to be compared should be as close to being identical as possible. This includes hardware configuration, operating system configuration, and installed applications. Do not make any adjustments to the healthy system, otherwise you may have two systems you will have to troubleshoot instead of one.
+		</div><div class="para">
+			Compare system logs and program output between the two systems. Sometimes this will help locate relevant error messages more quickly. Once the errors have been identified, the problem can be corrected then tested.
+		</div><div class="para">
+			Another point of comparison are configuration files. Make copies of the <code class="filename">/etc</code> directory from both systems and run a recursive <code class="command">diff</code> to identify differences. This process is a very efficient way to pinpoint configuration information that may need more detailed examination.
+		</div><div class="para">
+			Performance monitoring tools, such as <code class="command">sar</code> and <code class="command">top</code> allow machine performance to be compared between two systems. <code class="command">sar</code> will allow for comparison of metrics taken over a long period of time while <code class="command">top</code> allows currently active processes to be compared.
+		</div><div class="para">
+			Finally, another possibility is to compare two machines that have the same software installed and congruent configurations, but have a different hardware platform. This will identify problems where the hardware is overextended to run software beyond its capacity.
+		</div><h3><a id="idm140091324674464"></a>Isolating</h3><div class="para">
+			A common troubleshooting mistake is to take the first identified cause of a problem and immediately take steps to address that problem. This can lead to a solution to a problem that never existed.
+		</div><div class="para">
+			A better approach is to brainstorm as many causes as possible that might produce the symptoms that a given broken system displays. The goal of troubleshooting is to solve the root cause of a problem rather than simply addressing symptoms.
+		</div><div class="para">
+			Once all possible causes have been identified, rank them by difficulty to troubleshoot and solve. Start with easiest causes first then work down the list to the most complex problems to solve. This approach to troubleshooting is more efficient because it eliminates the easier problems to diagnose first, rather than spend a lot of time troubleshooting a complex problem that is nonexistent.
+		</div><h3><a id="idm140091324671744"></a>Testing</h3><div class="para">
+			When troubleshooting, make one change at a time then test the impact on the performance of the system. Making more than one change at at time adds more variables of complexity to the troubleshooting process. For example two changes may cancel each other out when making the changes one at a time would have clearly distinguished between the corrective modification and the detrimental one.
+		</div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

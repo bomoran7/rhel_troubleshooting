@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>8.4. Repairing Boot Loader Issues</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch08.html" title="Chapter 8. Boot Troubleshooting" /><link rel="prev" href="ch08s03.html" title="8.3. Repairing File System Issues at Boot" /><link rel="next" href="ch09.html" title="Chapter 9. Boot Troubleshooting Labs" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""ch0803.html">Previous</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091343672912"></a>8.4. Repairing Boot Loader Issues</h2></div></div></div><div class="highlights"><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+				Use <span class="keycap"><strong>e</strong></span> and <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>x</strong></span> to edit boot loader entries in memory, then boot.
+			</div></li><li class="listitem"><div class="para">
+				Use <code class="command">grub2-mkconfig &gt; /boot/grub2/grub.cfg</code> to regenerate the boot loader configuration.
+			</div></li><li class="listitem"><div class="para">
+				<code class="command">grub2-install</code> is used to reinstall the boot loader.
+			</div></li></ul></div></div><h3><a id="idm140091245605264"></a>Objectives</h3><div class="para">
+		After completing this section, students should be able to fix boot loader issues.
+	</div><div class="para">
+		The boot loader used by default on Red Hat Enterprise Linux 7 is <code class="command">grub2</code>, the second major version of the <em class="firstterm">GRand Unified Bootloader</em>.
+	</div><div class="para">
+		<code class="command">grub2</code> can be used to boot on both BIOS and UEFI systems, and supports booting almost any operating system that runs on modern hardware.
+	</div><div class="para">
+		The main configuration file for <code class="command">grub2</code> is <code class="filename">/boot/grub2/grub.cfg</code>, but administrators are not supposed to edit this file directly. Instead, a tool called <code class="command">grub2-mkconfig</code> is used to generate that configuration using a set of different configuration files, and the list of installed kernels.
+	</div><div class="para">
+		<code class="command">grub2-mkconfig</code> will look at <code class="filename">/etc/default/grub</code> for options such as the default menu timeout and kernel command line to use, then use a set of scripts in <code class="filename">/etc/grub.d/</code> to generate a configuration file.
+	</div><div class="para">
+		To make permanent changes to the boot loader configuration, an administrator needs to edit the configuration files listed previously, then run the following command:
+	</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>grub2-mkconfig &gt; /boot/grub2/grub.cfg</code></strong></pre><div class="para">
+		In those cases where major changes have been made, an administrator might prefer to run that command without the redirection so that the results can be inspected first.
+	</div><div class="formalpara"><div class="title">Important directives</div>
+			To troubleshoot a broken <code class="command">grub2</code> configuration, an administrator will need to understand the syntax of <code class="filename">/boot/grub2/grub.cfg</code> first. Actual bootable entries are encoded inside <code class="code">menuentry</code> blocks. In these blocks, <code class="code">linux16</code> and <code class="code">initrd16</code> lines point to the kernel to be loaded from disk (along with the kernel command line) and the <code class="code">initramfs</code> to be loaded. During interactive editing at boot, <span class="keycap"><strong>Tab</strong></span> completion is available to find these files.
+		</div><div class="para">
+		The <code class="code">set root</code> lines inside those blocks do not point to the root file system for the Red Hat Enterprise Linux 7 system, but instead point to the file system from which <code class="command">grub2</code> should load the kernel and initramfs files. The syntax is <code class="code"><em class="replaceable"><code>harddrive</code></em>,<em class="replaceable"><code>partition</code></em></code>, where <code class="code">hd0</code> is the first hard drive in the system, <code class="code">hd1</code> is the second, etc. The partitions are indicated as <code class="code">msdos1</code> for the first MBR partition, or <code class="code">gpt1</code> for the first GPT partition on that drive.
+	</div><div class="formalpara"><div class="title">Reinstalling the boot loader</div>
+			In those cases where the boot loader itself has become corrupted, it can be reinstalled using the <code class="command">grub2-install</code> command. On BIOS systems, the disk where <code class="command">grub2</code> should be installed in the MBR should be provided as an argument. On UEFI systems, no arguments are necessary when the EFI system partition is mounted on <code class="filename">/boot/efi</code>.
+		</div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+			<code class="command">info grub2</code> (<span class="emphasis"><em>GNU GRUB Manual</em></span>)
+		</div><div class="para">
+			<code class="command">info grub2-install</code> (<span class="emphasis"><em>GNU GRUB Manual</em></span>) 
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Chapter 28: "Invoking <code class="command">grub2-install</code>"
+					</div></li></ul></div>
+
+		</div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

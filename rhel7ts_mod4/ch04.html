@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 4. Being Proactive, Part 2 Labs</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="prev" href="configuration-management-overview.html" title="3.5. Configuration Management Overview" /><link rel="next" href="backups-and-disaster-recovery.html" title="Chapter 5. Backups and Disaster Recovery" /></head><body>v<img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" />
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091242761088"></a>4.1. Managing Configuration Files with <code class="command">diff</code> and <code class="command">patch</code> Lab</h2></div></div></div><div class="task Workshop"><p class="title"><strong>Explore <code class="command">diff</code> and <code class="command">patch</code></strong></p><div class="tasksummary"> <div class="para">
+			<span class="bold bold"><strong>Lab Overview:</strong></span> Use <code class="command">diff</code> and <code class="command">patch</code> to identify and replicate changes to configuration files.
+		</div>
+		 <div class="para">
+			<span class="bold bold"><strong>Success Criteria:</strong></span> Apply changes from one configuration file to a second one.
+		</div>
+		 </div><div class="taskprerequisites"> <div class="para">
+			Issue the following command as <code class="code">student</code> on server1.
+		</div>
+		
+<pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>for i in 1 2; do echo "ServerAdmin root@host$i.example.com" &gt; ~/host$i.cfg; done</code></strong></pre>
+		 </div><div class="procedure"><ol class="1"><li class="step"><div class="para">
+					Log in as <code class="code">student</code> with a password of <code class="code">student</code> on server1. The setup script copied two files in student's home directory: <code class="filename">host1.cfg</code> and <code class="filename">host2.cfg</code>.
+				</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>ls</code></strong>
+Desktop    Downloads  host2.cfg  Pictures  Templates
+Documents  host1.cfg  Music      Public    Videos</pre></li><li class="step"><div class="para">
+					Use <code class="command">diff</code> to note there is only a single line that differs between them. That line contains an e-mail address that refers to each host's hostname.
+				</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>diff host1.cfg host2.cfg</code></strong> 
+262c262
+&lt; ServerAdmin root@host1.example.com
+---
+&gt; ServerAdmin root@host2.example.com</pre></li><li class="step"><div class="para">
+					Backup <code class="filename">host1.cfg</code> using a file name with <code class="filename">$(date +%Y%m%d-%H%M)</code> appended.
+				</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>cp host1.cfg host1.cfg-$(date +%Y%m%d-%H%M)</code></strong>
+<code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>ls</code></strong>
+Desktop    Downloads  host1.cfg-20110830-1050  Music     Public     Videos
+Documents  host1.cfg  host2.cfg                Pictures  Templates</pre></li><li class="step"><div class="para">
+					Make a few changes to <code class="filename">host1.cfg</code>. Do not modify the line that contains a reference to its hostname.
+				</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>vim host1.cfg</code></strong></pre></li><li class="step"><div class="para">
+					Use <code class="command">diff</code> and note the changes between the original and new versions of <code class="filename">host1.cfg</code>. This displays a condensed view of what has changed and excludes identical content that doesn't interest us. Make sure you use the correct file name going forward (from the previous <code class="code">ls</code> command output).
+				</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>diff host1.cfg-20110830-1050 host1.cfg</code></strong>
+... output omitted ...</pre></li><li class="step"><div class="para">
+					Use <code class="command">diff -u</code> to create a patch file with the differences between the original version of <code class="filename">host1.cfg</code> and the newer version with your changes.
+				</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>diff -u host1.cfg-20110830-1050 host1.cfg &gt; changes.patch</code></strong></pre></li><li class="step"><div class="para">
+					Use <code class="command">patch</code> to update <code class="filename">host2.cfg</code> (making a backup as the patch is applied).
+				</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>patch -b host2.cfg changes.patch</code></strong> 
+patching file host2.cfg</pre></li><li class="step"><div class="para">
+					Use <code class="command">diff</code> to note the changes between <code class="filename">host2.cfg</code> and its backup.
+				</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>diff host2.cfg.orig host2.cfg</code></strong>
+... output omitted ...</pre></li><li class="step"><div class="para">
+					Use <code class="command">diff</code> to note any changes between the newest versions of <code class="filename">host1.cfg</code> and <code class="filename">host2.cfg</code>. The only difference between them should be the lines that reference their hostname.
+				</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>diff host1.cfg host2.cfg</code></strong>
+262c262
+&lt; ServerAdmin root@host1.example.com
+---
+&gt; ServerAdmin root@host2.example.com</pre></li></ol></div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

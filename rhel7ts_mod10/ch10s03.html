@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>10.3. Hardware Failures</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch10.html" title="Chapter 10. Hardware Issues" /><link rel="prev" href="ch10s02.html" title="10.2. Drivers" /><link rel="next" href="ch10s04.html" title="10.4. Virtualization Failures" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href="ch10s02.html">Previous</a> | 
+<a href="ch10s04.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091335119568"></a>10.3. Hardware Failures</h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Diagnose and test for memory failures
+					</div></li></ul></div>
+		</div></div><div class="Demo Demo"><div class="title">Monitoring and Testing Tools</div>
+				<div class="orderedlist"><ol><li class="listitem"><div class="para">
+							We have already discussed being proactive and monitoring for hard drive failures using SMART. Most hardware related failures will be detected by the kernel and either logged or cause a kernel panic.
+						</div></li><li class="listitem"><div class="para">
+							Memory errors happen all the time due to outside interference. Most of these errors will not be noticeable, but sometimes they can have quite an impact on your system. ECC-memory (Error Correcting Code) will help, but it is still not a fix for faulty memory chips. If you suspect that you have a bad memory bank installed in your system you can take it out and put it in a dedicated memory-tester, but we can also use the machine itself to test it. By installing the <code class="filename">memtest86+</code> package and running <code class="command">memtest-setup</code>, we will get an extra stanza in <code class="filename">/boot/grub/grub.conf</code> for <code class="filename">memtest86+</code>. Rebooting our machine into this stanza will start an extensive memory test. Leave it running overnight and check for errors the next morning. If a memory bank shows errors it is a good idea to have your hardware vendor replace it.
+						</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>yum -y install memtest86+</code></strong>
+...
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>memtest-setup</code></strong>
+grub2 detected, installing template...
+grub 2 template installed.
+Do not forget to regenerate your grub.cfg by:
+  # grub2-mkconfig -o /boot/grub2/grub.cfg
+Setup complete.
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>grub2-mkconfig -o /boot/grub2/grub.cfg</code></strong>
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-3.10.0-123.el7.x86_64
+Found initrd image: /boot/initramfs-3.10.0-123.el7.x86_64.img
+Found linux image: /boot/vmlinuz-0-rescue-2f7e407938c64980b13961ca0708f2d6
+Found initrd image: /boot/initramfs-0-rescue-2f7e407938c64980b13961ca0708f2d6.img
+Found memtest image: /boot/elf-memtest86+-4.20
+done
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>less /boot/grub2/grub.cfg</code></strong>
+...
+### BEGIN /etc/grub.d/20_memtest86+ ###
+menuentry 'Red Hat Enterprise Linux Server Memtest memtest86+-4.20' {
+        insmod part_msdos
+        insmod xfs
+        set root='hd0,msdos1'
+        if [ x$feature_platform_search_hint = xy ]; then
+          search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1 --hint='hd0,msdos1'  3bba8257-7403-46c4-a189-0d0677d2bec8
+        else
+          search --no-floppy --fs-uuid --set=root 3bba8257-7403-46c4-a189-0d0677d2bec8
+        fi
+        insmod bsd
+        echo    'Loading Red Hat ...Loading Enterprise Linux ...Loading Server Memtest ...Loading memtest86+-4.20  ...'
+        knetbsd /elf-memtest86+-4.20
+}
+### END /etc/grub.d/20_memtest86+ ###
+...
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>ls /boot|grep memtest</code></strong>
+...
+elf-memtest86+-4.20
+memtest86+-4.20
+...
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>reboot</code></strong></pre><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+								<code class="command">memtest</code> can also be launched from Red Hat Enterprise Linux installation media, like the rescue environment. Note the menu option from the installation media called <span class="quote">“<span class="quote">Memory test</span>”</span> which will launch <code class="command">memtest</code> from that media.
+							</div></div></div></li></ol></div>
+			</div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				<code class="filename">/usr/share/doc/memtest86+-*/README</code>
+			</div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

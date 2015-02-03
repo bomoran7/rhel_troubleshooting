@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>3.3. Red Hat Network Satellite 5 Configuration Channels</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch03.html" title="Chapter 3. Being Proactive, Part 2" /><link rel="prev" href="ch03s02.html" title="3.2. Managing Configuration Files with git" /><link rel="next" href="change-management-best-practices.html" title="3.4. Change Management Best Practices" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href="ch03s02.html">Previous</a> | 
+<a href="change-management-best-practices.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><a id="idm140091237208176"></a>3.3. Red Hat Network Satellite 5 Configuration Channels</h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Compare the use of <code class="command">diff</code>/<code class="command">patch</code> with <code class="command">git</code> with RHN Satellite 5
+					</div></li></ul></div>
+		</div></div><div class="para">
+			Red Hat Network Satellite 5 has the capability to deploy configuration files to client systems. It does this through a mechanism called configuration channels. Unlike software channels which deploy RPM packages to target systems, configuration channels are used to deploy individual files. The types of configuration files managed by Red Hat Network include text files, binary files, and symbolic links.
+		</div><div class="para">
+			Red Hat Network administrators can use command-line tools or the Red Hat Network web interface to create configuration files. The file contents can either be imported or typed in directly. Security attributes of each configuration file are displayed and modified using the web interface. Each file's user and group ownership, permissions, and SELinux context are specified in this way. When command-line tools are used, the security attributes from the original system are used to determine these values.
+		</div><div class="para">
+			Red Hat Network Configuration Channels support macro expansion within the contents of text files. There are predefined values that can be referenced, such as host name, IP address, Red Hat Network profile name and ID numbers, as well as custom fields that can be defined in Red Hat Network. This capability allows templates to be created that are adapted when they are deployed to target hosts.
+		</div><div class="table"><a id="idm140091237200336"></a><p class="title"><strong>Table 3.2. Comparison of diff/patch, git, and RHN Satellite 5 Configuration Channels</strong></p><div class="table-contents"><table summary="Comparison of diff/patch, git, and RHN Satellite 5 Configuration Channels"><colgroup><col width="25%" class="c1" /><col width="25%" class="c2" /><col width="25%" class="c3" /><col width="25%" class="c4" /></colgroup><thead><tr><th class="">
+						</th><th class="">
+							<code class="command">diff</code>/<code class="command">patch</code>
+						</th><th class="">
+							<code class="command">git</code> Revision Control
+						</th><th class="">
+							RHN Satellite 5 Configuration Channels
+						</th></tr></thead><tbody><tr><td class="">
+							<span class="bold bold"><strong>User interface:</strong></span>
+						</td><td class="">
+							command-line
+						</td><td class="">
+							command-line
+						</td><td class="">
+							command-line and web UI
+						</td></tr><tr><td class="">
+							<span class="bold bold"><strong>Supports templates through macro substitution:</strong></span>
+						</td><td class="">
+							No
+						</td><td class="">
+							No
+						</td><td class="">
+							Yes
+						</td></tr><tr><td class="">
+							<span class="bold bold"><strong>Supports symbolic links:</strong></span>
+						</td><td class="">
+							No
+						</td><td class="">
+							Yes
+						</td><td class="">
+							Yes
+						</td></tr><tr><td class="">
+							<span class="bold bold"><strong>Requires wrapper scripts:</strong></span>
+						</td><td class="">
+							Yes
+						</td><td class="">
+							Yes
+						</td><td class="">
+							No
+						</td></tr><tr><td class="">
+							<span class="bold bold"><strong>File ownership and permissions (SELinux context)</strong></span>
+						</td><td class="">
+							Maintains original values
+						</td><td class="">
+							No ability to manage security attributes
+						</td><td class="">
+							Can assign user/group ownership, permissions and SELinux context
+						</td></tr><tr><td class="">
+							<span class="bold bold"><strong>Easily compare various revisions of a file:</strong></span>
+						</td><td class="">
+							No
+						</td><td class="">
+							Yes
+						</td><td class="">
+							Yes
+						</td></tr><tr><td class="">
+							<span class="bold bold"><strong>Facilitates parallel development:</strong></span>
+						</td><td class="">
+							No
+						</td><td class="">
+							Yes
+						</td><td class="">
+							No
+						</td></tr><tr><td class="">
+							<span class="bold bold"><strong>Support revision log information:</strong></span>
+						</td><td class="">
+							No
+						</td><td class="">
+							Yes
+						</td><td class="">
+							No
+						</td></tr></tbody></table></div></div><br class="table-break" /><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				Red Hat Network Satellite 5.4 Reference Guide 
+				<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Section 7.7: Configuration
+						</div></li></ul></div>
+			</div></div></div></div>><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

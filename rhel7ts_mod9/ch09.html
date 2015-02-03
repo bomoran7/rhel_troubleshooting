@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 9. Boot Troubleshooting Labs</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="prev" href="ch08s04.html" title="8.4. Repairing Boot Loader Issues" /><link rel="next" href="ch09s02.html" title="9.2. Resetting a Lost root Password Lab" /></head><body<img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+ 
+<a href="ch09s02.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h1 class="title"><a id="idm140091344934816"></a>Chapter 9. Boot Troubleshooting Labs</h1></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="ch09.html#idm140091248314960">9.1. Selecting a Boot Target Lab</a></span></dt><dt><span class="section"><a href="ch09s02.html">9.2. Resetting a Lost root Password Lab</a></span></dt><dt><span class="section"><a href="ch09s03.html">9.3. Repairing Boot Problems Lab</a></span></dt><dt><span class="section"><a href="ch09s04.html">9.4. Repairing a Boot Loader Problem Lab</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="idm140091248314960"></a>9.1. Selecting a Boot Target Lab</h2></div></div></div><div class="task Checklist"><p class="title"><strong> </strong></p><div class="tasksummary"> <div class="para">
+		In this lab, you will configure your <code class="code">server1</code> system to boot into different targets.
+	</div>
+	 <div class="informaltable"><table><colgroup><col width="50%" class="c1" /><col width="50%" class="c2" /></colgroup><thead><tr><th class="" colspan="2">
+						Resources:
+					</th></tr></thead><tbody><tr><td class="">
+						<span class="bold bold"><strong>Machines:</strong></span>
+					</td><td class="">
+						<code class="code">server1</code>
+					</td></tr></tbody></table></div>
+	 <div class="formalpara"><div class="title">Outcomes:</div>
+			A system booted into different targets.
+		</div>
+	 </div><div class="taskprerequisites"> <div class="itemizedlist"><ul><li class="listitem"><div class="para">
+				Reset your <code class="code">server1</code> system.
+			</div></li></ul></div>
+	 </div><div class="procedure"><ol class="1"><li class="step"><div class="para">
+				Configure your <code class="code">server1</code> system to boot into the <code class="code">multi-user</code> target by default. <span class="bold bold"><strong>Do not</strong></span> reboot your <code class="code">server1</code> system right now, as it will make your graphical console unavailable.
+			</div><ol class="a"><li class="step"><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl set-default multi-user.target</code></strong>
+rm '/etc/systemd/system/default.target'
+ln -s '/usr/lib/systemd/system/multi-user.target' '/etc/systemd/system/default.target'</pre></li></ol></li><li class="step"><div class="para">
+				Verify that <code class="code">multi-user</code> is now indeed the new default target.
+			</div><ol class="a"><li class="step"><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl get-default</code></strong>
+multi-user.target</pre><div class="para">
+						Alternatively:
+					</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>ls -l /etc/systemd/system/default.target</code></strong>
+lrwxrwxrwx. 1 root root 41 Mar 10 08:00 /etc/systemd/systemd/default.target -&gt; /usr/lib/systemd/system/multi-user.target</pre></li></ol></li></ol></div></div><div class="note"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+			In our environment, the grahpical console is not available (except via VNC). If you wanted to set the default target back to the <code class="code">graphical</code> target you would use:
+		</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl set-default graphical.target</code></strong></pre></div></div></div></div><ul class="docnav"><li class="previous"><a accesskey="p" href="ch08s04.html"><strong>Prev</strong>8.4. Repairing Boot<center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

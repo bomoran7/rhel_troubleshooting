@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 3. Being Proactive, Part 2</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="prev" href="ch02s03.html" title="2.3. Baselining: Using sar Lab" /><link rel="next" href="ch03s02.html" title="3.2. Managing Configuration Files with git" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+
+<a href="ch03s02.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h1 class="title"><a id="idm140091252017024"></a>Chapter 3. Being Proactive, Part 2</h1></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="ch03.html#idm140091238065968">3.1. Managing Configuration Files with <code class="command">diff</code> and <code class="command">patch</code></a></span></dt><dt><span class="section"><a href="ch03s02.html">3.2. Managing Configuration Files with <code class="command">git</code></a></span></dt><dt><span class="section"><a href="ch03s03.html">3.3. Red Hat Network Satellite 5 Configuration Channels</a></span></dt><dt><span class="section"><a href="change-management-best-practices.html">3.4. Change Management Best Practices</a></span></dt><dt><span class="section"><a href="configuration-management-overview.html">3.5. Configuration Management Overview</a></span></dt></dl></div><div class="abstract"><p class="title"><strong>Abstract</strong></p><div class="para">
+			<div class="table"><a id="idm140091259102592"></a><p class="title"><strong>Table 3.1. Unit Details</strong></p><div class="table-contents"><table summary="Unit Details"><colgroup><col width="50%" class="c1" /><col width="50%" class="c2" /></colgroup><tbody><tr><td class="">
+								<span class="bold bold"><strong>Unit Goal</strong></span>
+							</td><td class="">
+								Proactively manage multiple revisions of configuration files.
+							</td></tr><tr><td class="">
+								<span class="bold bold"><strong>Performance Objective</strong></span>
+							</td><td class="">
+								<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+											Use <code class="command">diff</code> and <code class="command">patch</code> to manage and deploy configuration files and changes
+										</div></li><li class="listitem"><div class="para">
+											Use <code class="command">git</code> to manage configuration files
+										</div></li><li class="listitem"><div class="para">
+											Discuss the role of RHN Satellite 5 Configuration channels
+										</div></li><li class="listitem"><div class="para">
+											Discuss configuration management best practices
+										</div></li></ul></div>
+
+							</td></tr><tr><td class="">
+								<span class="bold bold"><strong>Unit Sections</strong></span>
+							</td><td class="">
+								<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+											Managing Configuration Files with <code class="command">diff</code> and <code class="command">patch</code>
+										</div></li><li class="listitem"><div class="para">
+											Managing Configuration Files with <code class="command">git</code>
+										</div></li><li class="listitem"><div class="para">
+											Red Hat Network Satellite 5 Configuration Channels
+										</div></li><li class="listitem"><div class="para">
+											Configuration Management Best Practices
+										</div></li></ul></div>
+
+							</td></tr></tbody></table></div></div><br class="table-break" />
+
+		</div></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="idm140091238065968"></a>3.1. Managing Configuration Files with <code class="command">diff</code> and <code class="command">patch</code></h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Locate differences between files
+					</div></li><li class="listitem"><div class="para">
+						Replicate file changes across systems
+					</div></li></ul></div>
+		</div></div><div class="para">
+			When editing configuration files in order to troubleshoot problems, make backups of the files before you touch them. We can do this by using a revision control system, but the more traditional method is to make a copy by hand. When making a backup copy by hand it is best to include the current date (and maybe even the time) in the file name of the backup. This will help you or your colleagues later with identifying or cleaning up backup files. A typical command might look something like this:
+		</div><pre class="screen"><code class="prompt">[root@server1 etc]# </code><strong class="userinput"><code>cp bofh.conf bofh.conf.$(date +%Y%m%d-%H%M)</code></strong></pre><div class="para">
+			Test after each and every single change. If the change was successful, congratulations; otherwise, revert to the previous version and try something else. Keep repeating this process until the problem is solved.
+		</div><div class="para">
+			The <code class="command">diff</code> command is used to compare the contents of two files for differences. Suppose that a service on station1 is malfunctioning but the same service works on station20. Thanks to diff and the use of simple, text-based configuration files, we can easily compare the working and non-working configurations:
+		</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>diff file.conf-station1 file.conf-station20</code></strong>
+1c1 <img class="callout" src="Common_Content/images/1.png" alt="1" border="0" id="diff1" />
+&lt; Hostname = station1 
+--- 
+&gt; Hostname = station20 
+2c2 <img class="callout" src="Common_Content/images/2.png" alt="2" border="0" id="diff2" />
+&lt; Setting1 = a 
+--- 
+&gt; Setting1 = A 
+3a4 <img class="callout" src="Common_Content/images/3.png" alt="3" border="0" id="diff3" />
+&gt; Setting2 = B
+5d5 <img class="callout" src="Common_Content/images/4.png" alt="4" border="0" id="diff4" />
+&lt; Setting4 = D</pre><div class="para">
+			<code class="command">diff</code> shows us that there are four places where the configurations differ: 
+			<div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#diff1"><img class="callout" src="Common_Content/images/1.png" alt="1" border="0" id="diff1" /></a> </p></td><td valign="top" align="left"><div class="para">
+						On line 1, the Hostname variable is different in each file. Given that the files are from different systems, this makes sense and is probably not the problem.
+					</div></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#diff2"><img class="callout" src="Common_Content/images/2.png" alt="2" border="0" id="diff2" /></a> </p></td><td valign="top" align="left"><div class="para">
+						On line 2, the Setting1 variable is set to a on station1 and A on station20. This could cause problems if the service is case-sensitive.
+					</div></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#diff3"><img class="callout" src="Common_Content/images/3.png" alt="3" border="0" id="diff3" /></a> </p></td><td valign="top" align="left"><div class="para">
+						Setting2 is set on station20, but not on station1. In other words, if you were to convert the station1 version of the file to the station20 version of the file you would have to add Setting2 after line 3, which would become line 4 of the file.
+					</div></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#diff4"><img class="callout" src="Common_Content/images/4.png" alt="4" border="0" id="diff4" /></a> </p></td><td valign="top" align="left"><div class="para">
+						Setting4 is set on station1, but not on station20. In other words, you would need to delete line 5 in the station1 file to make it like the station20 file.
+					</div></td></tr></table></div>
+
+		</div><div class="para">
+			While the default output of <code class="command">diff</code> can be easier to read, an alternate output format called a <span class="emphasis"><em>unified diff</em></span> is also available. This format includes information that helps the <code class="command">patch</code> utility more accurately apply the changes described. The result of this is that if you have several similar files that all need the same changes made, you can make the change once, store a unified diff comparing the changed file to an unchanged file and then use patch to apply your changes to as many files as you need.
+		</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>diff -u file.conf-station1 file.conf-station20</code></strong>
+1c1 
+--- file.conf-station1 2007-01-03 18:36:36.000000000 -0800 
++++ file.conf-station20 2007-01-02 21:10:30.000000000 -0800 
+@@ -1,4 +1,4 @@ 
+-Hostname = station1 
+-Setting1 = a 
++Hostname = station20 
++Setting1 = A 
++Setting2 = B
+ Setting3 = C 
+-Setting4 = D</pre><div class="para">
+			The details of the differences between these two files has already been discussed. The unified diff is just an alternate way of displaying the same information. The first three lines describe details of the files the patch was taken from and where the changes start. Lines that begin with <code class="code">+</code> exist in station1's configuration, but not in station20's. Lines that begin with <code class="code">-</code> exist on station20, but not station1. Lines with no special character exist in both and are just there to provide "context" so that patch can more accurately decide where the changes go. To use patch, simply store the output of a <code class="command">diff -u</code> in a file and run a command like the following, which would make file.conf-station1 look like file.conf-station20:
+		</div><pre class="screen"><code class="prompt">[student@server1 ~]$ </code><strong class="userinput"><code>patch -b file.conf-station1 file.conf.patch</code></strong></pre><div class="para">
+			But <span class="emphasis"><em>beware</em></span>! Do you actually want all of the changes above to be made? It would be advisable to first edit <code class="filename">file.conf.patch</code> and remove the two lines describing the <code class="code">Hostname</code> variable, since those should remain different between systems. If anything terrible happens, <code class="command">patch -b</code> automatically creates a backup of each file it changes. Backups are given the <code class="filename">.orig</code> extension.
+		</div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				<code class="command">diff</code>(1) and <code class="command">patch</code>(1) man pages
+			</div></div></div></div></div>><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

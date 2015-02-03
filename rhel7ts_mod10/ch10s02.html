@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>10.2. Drivers</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch10.html" title="Chapter 10. Hardware Issues" /><link rel="prev" href="ch10.html" title="Chapter 10. Hardware Issues" /><link rel="next" href="ch10s03.html" title="10.3. Hardware Failures" /></head><body<img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href=""ch10.html">Previous</a> | 
+<a href="ch10s03.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091246366448"></a>10.2. Drivers</h2></div></div></div><div class="highlights"><div class="para">
+			In this section you will learn to:
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para">
+						Identify appropriate drivers and modules
+					</div></li></ul></div>
+		</div></div><div class="para">
+			A kernel module is an optional portion of kernel code that may be loaded after the kernel has been initialized. Only a few modules that are essential to all systems are compiled directly into the kernel. Dynamic modules that are needed at boot time are loaded by <span class="application"><strong>GRUB</strong></span> from the <code class="code">initrd</code> (initial RAM disk). Other modules may be loaded as needed later and are found in the <code class="filename">/lib/modules/</code> directory.
+		</div><div class="itemizedlist"><div class="para">
+				Modules are used for several reasons:
+			</div><ul><li class="listitem"><div class="para">
+					Reduced memory footprint: memory is not used for drivers that are not required.
+				</div></li><li class="listitem"><div class="para">
+					Flexibility: modules may be added to the system after it has been installed. These modules are often called third-party drivers.
+				</div></li><li class="listitem"><div class="para">
+					Maximizing uptime: a module may be unloaded and reloaded as many times as wanted with no reboot.
+				</div></li></ul></div><div class="para">
+			Third party modules may be installed but will be placed under the particular kernel's <code class="filename">/lib/modules/<em class="replaceable"><code>version</code></em>/</code> directory. When a new kernel is installed, you will need to ensure that the third party module is re-installed into the new kernel directory tree.
+		</div><h3><a id="idm140091324666096"></a>Working with Modules</h3><div class="para">
+			The <code class="command">lsmod</code> utility provides a list of all loaded modules, along with the corresponding size and usage count.
+		</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>lsmod | grep xfs</code></strong>
+xfs                   914152  2
+libcrc32c              12644  1 xfs</pre><div class="para">
+			Modules may be loaded or unloaded using the <code class="command">modprobe</code> utility. Unlike <code class="command">insmod</code>, <code class="command">modprobe</code> will automatically load dependencies locating the required modules on the file system. Loading a module is as easy as:
+		</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>modprobe raid1</code></strong></pre><div class="para">
+			To remove a currently loaded module, use <code class="command">modprobe -r</code>:
+		</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>modprobe -r raid1</code></strong></pre><div class="para">
+			Note that a module may only be removed if it is not currently in use.
+		</div><div class="para">
+			The <code class="command">modinfo</code> command can be passed a module name or filename. It will display the associated information, such as the author's name, license, description, module version, dependencies, parameters, etc.
+		</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>modinfo xfs</code></strong>
+filename:       /lib/modules/3.10.0-123.el7.x86_64/kernel/fs/xfs/xfs.ko
+license:        GPL
+description:    SGI XFS with ACLs, security attributes, large block/inode numbers, no debug enabled
+author:         Silicon Graphics, Inc.
+alias:          fs-xfs
+srcversion:     439A73733957FAAE120F1B2
+depends:        libcrc32c
+intree:         Y
+vermagic:       3.10.0-123.el7.x86_64 SMP mod_unload modversions
+signer:         Red Hat Enterprise Linux kernel signing key
+sig_key:        00:AA:5F:56:C5:87:BD:82:F2:F9:9D:64:BA:83:DD:1E:9E:0D:33:4A
+sig_hashalgo:   sha256
+</pre><h3><a id="idm140091324655504"></a>Device Files</h3><div class="para">
+			Linux distributions used to ship with thousands of files under the <code class="filename">/dev</code> directory. Although this worked, it certainly was not elegant to provide every single device special file known to mankind particularly if the corresponding device would never be added to your system. A newer, better, and more efficient system was then added to replace static files under <code class="filename">/dev</code>. This system is called <span class="application"><strong>udev</strong></span>. It consists of a series of utilities and configuration files which provide rules that apply whenever a device is connected to the system and detected by the kernel. <span class="application"><strong>udev</strong></span> makes it possible to create or remove files on the fly, when the corresponding device is plugged in or disconnected. It also lets the system administrator add rules in order to modify default names and permissions used under <code class="filename">/dev</code>. Rules are located under <code class="filename">/etc/udev/rules.d/</code>. Red Hat Enterprise Linux ships with a default set of rules that should work in most cases. When adding your own rules, we suggest adding a new file with your rules in it, rather than editing the existing files.
+		</div><div class="note References"><div class="admonition_header"><p><strong>Note</strong></p></div><div class="admonition"><div class="para">
+				<code class="command">lsmod</code>(8), <code class="command">modprobe</code>(8), <code class="command">modinfo</code>(8), and <code class="command">udev</code>(7) man pages
+			</div></div></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

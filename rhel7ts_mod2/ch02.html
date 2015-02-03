@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 2. Being Proactive, Part 1 Labs</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="prev" href="ch01s06.html" title="1.6. Network Monitoring" /><link rel="next" href="ch02s02.html" title="2.2. Baselining: Using aide Lab" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+
+<a href="ch02s02.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h1 class="title"><a id="idm140091337549152"></a>Chapter 2. Being Proactive, Part 1 Labs</h1></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="ch02.html#idm140091252524720">2.1. Centralized Logging Lab</a></span></dt><dt><span class="section"><a href="ch02s02.html">2.2. Baselining: Using <span class="application"><strong>aide</strong></span> Lab</a></span></dt><dt><span class="section"><a href="ch02s03.html">2.3. Baselining: Using <code class="command">sar</code> Lab</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="idm140091252524720"></a>2.1. Centralized Logging Lab</h2></div></div></div><div class="task Lab"><p class="title"><strong>Centralized Logging</strong></p><div class="tasksummary"> <div class="para">
+			<span class="bold bold"><strong>Lab Overview:</strong></span> Configure server1 to forward log messages to desktop1.
+		</div>
+		 <div class="para">
+			<span class="bold bold"><strong>Success Criteria:</strong></span> When the <code class="command">logger</code> command is run on server1, the messages of <code class="code">info</code> priority or higher will appear in <code class="filename">/var/log/messages</code> on desktop1.
+		</div>
+		 <div class="para">
+			<span class="bold bold"><strong>Lab Outline:</strong></span> One of the first steps taken when troubleshooting a broken system is reviewing the log files. Sometimes when a system has problems the log files on its local hard drive cannot be accessed. This is where centralized logging is a benefit.
+		</div>
+		 <div class="para">
+			In this lab, configure desktop1 to receive remote log messages from server1. Then, configure server1 to send copies of all log messages of <code class="code">info</code> priority and higher to desktop1. Lastly, test that messages are going to desktop1 by running <code class="command">logger</code> on server1 and viewing the message in <code class="filename">/var/log/messages</code> on desktop1.
+		</div>
+		 </div><div class="procedure"><ol class="1"><li class="step"><p class="title"><strong>Configure desktop1 to receive remote log messages from server1.</strong></p><div class="informalexample"><div class="para">
+					The logging service on Red Hat Enterprise Linux 6 is called <span class="application"><strong>rsyslog</strong></span>. The following steps enable logging from remote servers on desktop1.
+				</div><div class="para">
+					Examine the contents of <code class="filename">/etc/rsyslog.conf</code> on desktop1. Uncomment the two lines following the comment that reads:
+				</div><pre class="screen"># Provides UDP syslog reception
+$ModLoad imudp
+$UDPServerRun 514</pre><div class="para">
+					Restart the <span class="application"><strong>rsyslog</strong></span> service once your changes have been saved:
+				</div><pre class="screen"><code class="prompt">[root@desktop1 ~]# </code><strong class="userinput"><code>systemctl restart rsyslog</code></strong></pre></div></li><li class="step"><p class="title"><strong>Configure server1 to send copies of all log messages of <code class="code">info</code> priority and higher to desktop1.</strong></p><div class="informalexample"><div class="para">
+					The same service must be configured on server1 to send copies of its log messages to desktop1. Add the following logging rule below the "<code class="code">RULES</code>" line and restart the <span class="application"><strong>rsyslog</strong></span> service:
+				</div><pre class="screen">*.info          @desktop1.example.com</pre><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>systemctl restart rsyslog</code></strong></pre></div></li><li class="step"><p class="title"><strong>Test</strong></p><div class="informalexample"><div class="para">
+					To test, run the <code class="command">logger</code> command on server1, then look at the <code class="filename">/var/log/messages</code> file on both systems.
+				</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>logger "Hello from server1"</code></strong>
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>tail /var/log/messages</code></strong>
+Jan 18 14:24:37 server1 root: Hello from server1
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>tail /var/log/messages</code></strong>
+Jan 18 14:24:37 server1 root: Hello from server1</pre></div></li></ol></div></div></div></div>><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>2.2. Baselining: Using aide Lab</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch02.html" title="Chapter 2. Being Proactive, Part 1 Labs" /><link rel="prev" href="ch02.html" title="Chapter 2. Being Proactive, Part 1 Labs" /><link rel="next" href="ch02s03.html" title="2.3. Baselining: Using sar Lab" /></head><body><img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href="ch02.html">Previous</a> | 
+<a href="ch02s03.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="idm140091251006752"></a>2.2. Baselining: Using <span class="application"><strong>aide</strong></span> Lab</h2></div></div></div><div class="task Lab"><p class="title"><strong>AIDE File System Monitoring</strong></p><div class="tasksummary"> <div class="para">
+			<span class="bold bold"><strong>Lab Overview:</strong></span> Install and configure AIDE to monitor for file system changes on server1.
+		</div>
+		 <div class="para">
+			<span class="bold bold"><strong>Success Criteria:</strong></span> Changed files on the file system will be detected by <code class="command">aide</code> command.
+		</div>
+		 <div class="para">
+			<span class="bold bold"><strong>Lab Outline:</strong></span> On server1, install the <code class="command">aide</code> utility and create the initial database. Subsequently, change some system files and use <code class="command">aide</code> to check your system.
+		</div>
+		 </div><div class="procedure"><ol class="1"><li class="step"><p class="title"><strong>Install the <code class="command">aide</code> utility and create the initial database.</strong></p><div class="informalexample"><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>yum install -y aide</code></strong>
+... Output omitted ... 
+<code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>aide --init</code></strong> 
+
+AIDE, version 0.15.1
+
+### AIDE database at /var/lib/aide/aide.db.new.gz initialized.
+
+</pre><div class="para">
+					It will take several minutes to initialize the aide database. When it completes, copy the database where aide expects it to reside on the system.
+				</div><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>cd /var/lib/aide</code></strong> 
+<code class="prompt">[root@server1 aide]# </code><strong class="userinput"><code>cp aide.db.new.gz aide.db.gz</code></strong> 
+<code class="prompt">[root@server1 aide]# </code><strong class="userinput"><code>cd</code></strong></pre></div></li><li class="step"><p class="title"><strong>Change some system files and use <code class="command">aide</code> to check your system.</strong></p><div class="informalexample"><pre class="screen"><code class="prompt">[root@server1 ~]# </code><strong class="userinput"><code>aide --check</code></strong> 
+AIDE 0.15.1 found differences between database and filesystem!!
+Start timestamp: 2014-12-15 08:22:04
+
+Summary:
+  Total number of files:        107530
+  Added files:                  9
+  Removed files:                0
+  Changed files:                10
+
+
+---------------------------------------------------
+Added files:
+---------------------------------------------------
+
+... Output omitted ...
+
+---------------------------------------------------
+Changed files:
+---------------------------------------------------
+
+changed: /usr/bin/tcsh
+... Output omitted ...
+</pre></div></li></ol></div></div>
+  </div>
+  <center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>3.4. Change Management Best Practices</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.2.0" /><meta name="package" content="Red_Hat_Enterprise_Linux_7-rhel7ts-7.0-en-US-0.0-0" /><link rel="home" href="index.html" title="RHEL 7 Troubleshooting" /><link rel="up" href="ch03.html" title="Chapter 3. Being Proactive, Part 2" /><link rel="prev" href="ch03s03.html" title="3.3. Red Hat Network Satellite 5 Configuration Channels" /><link rel="next" href="configuration-management-overview.html" title="3.5. Configuration Management Overview" /></head><body<img src="images/rhheader_thin.png" width="1024" height="96" alt="rh_header" /><div id="menu" align="right">
+<a href="ch03s03.html">Previous</a> | 
+<a href="configuration-management-overview.html">Next</a></div>
+<p>
+  <audio autoplay="" controls="">
+    <source src="audio/ch01s02.mp3" type="audio/mpeg" />
+    <embed autoplay="true" height="50" src="ch01s02.mp3" width="100" wmode="opaque">
+    </embed>
+  </audio> 
+  </p><div><div><h2 class="title"><a id="change-management-best-practices"></a>3.4. Change Management Best Practices</h2></div></div></div><div class="para">
+			In almost any environment, change is a constant. Being able to make changes in a controlled and thought out way is critical to an organization’s success.
+		</div><div class="para">
+			Change Management is the process of planning, notifying, and executing changes while lowering impact of those changes and producing the best possible outcome for all parties involved.
+		</div><div class="para">
+			Here are a few tips to keep in mind when coming up with a change management strategy:
+		</div><div class="para">
+			<span class="strong strong"><strong>Provide early and consistent communication</strong></span>
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					All involved are less resistant to change when they are given time to prepare and adjust as soon as possible.
+				</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Extra time allows for everyone involved to plan and collaborate for a smooth change.
+						</div></li></ul></div></li><li class="listitem"><div class="para">
+					Establish a change management/control meeting, process, or board that includes representatives of all the regular stakeholders in an organization.
+				</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Changes should be discussed and signed off by all parties
+						</div></li><li class="listitem"><div class="para">
+							Provide a policy for minor reoccurring changes
+						</div></li></ul></div></li><li class="listitem"><div class="para">
+					Provide a prioritization policy for changes.
+				</div></li></ul></div><div class="para">
+			<span class="strong strong"><strong>Timing is everything</strong></span>
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Make sure that all parties involved agree with the time frame for the change.
+				</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Deploying when people are out of the office or during a very busy part of a sales cycle could lead to disaster.
+						</div></li></ul></div></li><li class="listitem"><div class="para">
+					Provide a streamlined process for emergency changes.
+				</div></li></ul></div><div class="para">
+			<span class="strong strong"><strong>Provide a solid execution strategy</strong></span>
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Detail each step that will be required to make the change.
+				</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Document expected responses or return codes
+						</div></li><li class="listitem"><div class="para">
+							Document errors which may be false positives
+						</div></li></ul></div></li></ul></div><div class="para">
+			<span class="strong strong"><strong>Make the change desirable and communicate</strong></span>
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Help all involved to understand the need for the change by discussing the current issues and the intended outcome of the change.
+				</div></li><li class="listitem"><div class="para">
+					Be ready to provide and present the facts regarding the change.
+				</div></li><li class="listitem"><div class="para">
+					Break down the benefits of the change to show each stakeholder how they will benefit.
+				</div></li><li class="listitem"><div class="para">
+					Making the change more relevant on a personal level will help grease the wheels of change.
+				</div></li><li class="listitem"><div class="para">
+					Explain how this change will help the overall organization achieve its goals.
+				</div></li></ul></div><div class="para">
+			<span class="strong strong"><strong>Prepare to back out</strong></span>
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Should something go wrong, have a detailed back out plan that will bring you to the exact state you were in before the change.
+				</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Back up configuration and data before making changes
+						</div></li><li class="listitem"><div class="para">
+							Provide a plan and be ready to test if the back out worked if needed
+						</div></li></ul></div></li><li class="listitem"><div class="para">
+					Test back out procedures in development/test environment.
+				</div></li></ul></div><div class="para">
+			<span class="strong strong"><strong>Iron out the kinks ahead of time</strong></span>
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Do not deploy any changes that are untested.
+				</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Deploying untested changes can be a career limiting move (CLM).
+						</div></li></ul></div></li><li class="listitem"><div class="para">
+					Maintain a development and/or test environment that is identical to production.
+				</div></li><li class="listitem"><div class="para">
+					If possible, changes should be tested by an independent team from the party requesting the change.
+				</div></li><li class="listitem"><div class="para">
+					Don’t just assume that because a vendor provides a patch, fix, or recommendation it’s foolproof.
+				</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Trust but verify
+						</div></li></ul></div></li></ul></div><div class="para">
+			<span class="strong strong"><strong>Monitor the change as it’s being implemented</strong></span>
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					When possible, make changes in a phased approach.
+				</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Closely watch all phases and only continue to the next phase when absolutely sure the current phase is complete.
+						</div></li></ul></div></li></ul></div><div class="para">
+			<span class="strong strong"><strong>Provide a plan for notification and testing after changes are complete</strong></span>
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					Make sure all stakeholders have solid regression testing plans ready for execution.
+				</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+							Regression testing requires testing all existing and new functionality.
+						</div></li></ul></div></li><li class="listitem"><div class="para">
+					Be prepared to notify stakeholders when changes are complete and the environment being changed is ready for testing.
+				</div></li></ul></div><div class="para">
+			<span class="strong strong"><strong>Implement a "post-mortem" review process post change</strong></span>
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">
+					This helps bring to light any “lessons learned” and issues with the process or organization implementing the process.
+				</div></li><li class="listitem"><div class="para">
+					This will also identify any issues relating to the change which may still require attention.
+				</div></li></ul></div></div><center>  
+         <p>Copyright ©2015 Red Hat, Inc. </p>
+       </center></body></html>
